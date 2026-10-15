@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>10-Minute Pre-Launch Security Checklist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#EEF1F4;--panel:#fff;--ink:#1C2433;--soft:#4A5568;--rule:#C9D1DB;--tag:#F2C230;--crit:#B4261F;--focus:#2457C5}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#141A24;--panel:#1C2433;--ink:#E8ECF2;--soft:#A7B1C0;--rule:#2F3A4C;--tag:#E6B422;--crit:#F0716A;--focus:#7AA2F7}}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Archivo,system-ui,sans-serif;font-size:17px;line-height:1.6}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.wrap{max-width:780px;margin:0 auto;padding:24px 20px 80px}
+.back{display:inline-block;margin-bottom:28px;color:var(--soft)}
+h1{font-stretch:120%;font-weight:900;font-size:clamp(30px,5vw,44px);line-height:1.05;margin:0 0 16px}
+h2{font-stretch:112%;font-weight:850;font-size:26px;margin:44px 0 12px;padding-top:20px;border-top:2px solid var(--ink)}
+h3{font-size:20px;margin:36px 0 8px}
+blockquote{margin:20px 0;padding:18px 22px;background:var(--tag);color:#2A2100;border-radius:12px}
+blockquote p{margin:6px 0}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:15px}
+th,td{border:1px solid var(--rule);padding:8px 10px;text-align:left}
+code{font-family:"JetBrains Mono",monospace;font-size:.85em;background:var(--panel);padding:1px 5px;border-radius:4px}
+pre{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:16px;overflow-x:auto;white-space:pre-wrap}
+pre code{padding:0;background:none}
+.cta{margin-top:48px;padding:26px;border:2px solid var(--ink);border-radius:14px;background:var(--panel)}
+.cta a{font-weight:700}
+</style></head><body><div class="wrap">
+<a class="back" href="./">Back to Ship-Ready Check</a>
+<h1>The 10-Minute Pre-Launch Security Checklist</h1>
+<p>For anyone who built an app with Lovable, Bolt, Cursor, Claude Code, Replit, v0 or any AI tool.</p>
+<p>Each check takes about a minute. For each one, you get <strong>what to look for</strong> and a <strong>prompt to paste into your coding agent</strong> so it checks for you.
+If a check fails, fix it before you share your link anywhere.</p>
+<hr />
+<h3>1. No secret keys in your website code</h3>
+<p>Secret keys (OpenAI <code>sk-...</code>, Stripe <code>sk_live_...</code>, Supabase <code>service_role</code>) must never be in files that load in the browser.
+<strong>Think of it like this:</strong> your website is a shop window. Anything in it, anyone can read.</p>
+<blockquote>
+<p>Search this project for API keys or secrets written directly in code, including OpenAI, Anthropic, Stripe secret keys, Supabase service_role keys, AWS keys and database URLs with passwords. List every file and line. Do not change anything yet.</p>
+</blockquote>
+<p><strong>Safe to be public:</strong> Stripe <code>pk_</code> keys, the Supabase <strong>anon</strong> key, the Firebase <code>apiKey</code>.</p>
+<h3>2. Your .env file is not in your repo</h3>
+<blockquote>
+<p>Check whether any .env file with real values is committed to this repo, and whether .gitignore contains .env*. Report what you find.</p>
+</blockquote>
+<h3>3. Nothing secret uses a public prefix</h3>
+<p>Variables starting with <code>NEXT_PUBLIC_</code>, <code>VITE_</code>, <code>REACT_APP_</code> or <code>EXPO_PUBLIC_</code> are copied into your website.</p>
+<blockquote>
+<p>List every environment variable with a NEXT_PUBLIC_, VITE_, REACT_APP_ or EXPO_PUBLIC_ prefix. Flag any whose name or value looks secret.</p>
+</blockquote>
+<h3>4. Supabase: Row Level Security is ON for every table</h3>
+<p>Open Supabase, then the Table Editor. If any table says <strong>RLS disabled</strong>, anyone can read it with your public key.</p>
+<blockquote>
+<p>List every Supabase table and whether Row Level Security is enabled. For each policy, show its USING clause.</p>
+</blockquote>
+<h3>5. Supabase: no policy says <code>USING (true)</code></h3>
+<p>That rule means "let everyone in." It's the pattern behind a 2025 vulnerability that exposed data in 170+ apps.</p>
+<blockquote>
+<p>Find any Supabase policy using USING (true) or WITH CHECK (true) on a table that holds user data. Suggest an ownership-based replacement using auth.uid().</p>
+</blockquote>
+<h3>6. Firebase: rules aren't wide open</h3>
+<p>If your rules say <code>allow read, write: if true</code> or are still in "test mode," your database is public.</p>
+<h3>7. Users can't see each other's stuff</h3>
+<p>Log in as yourself, open something that belongs to you (an order, a note, a profile), and change the number or ID in the URL. If you can see someone else's, that's a serious bug.</p>
+<blockquote>
+<p>For every API route that takes an ID, check that it verifies the record belongs to the logged-in user. List any route that doesn't.</p>
+</blockquote>
+<h3>8. Payments: the webhook checks it's really Stripe</h3>
+<blockquote>
+<p>Check the Stripe webhook handler. Does it verify the signature with stripe.webhooks.constructEvent on the raw body? Is the price set on the server, not taken from the browser? Does access come only from the verified webhook, not the success page?</p>
+</blockquote>
+<h3>9. Your AI endpoints can't be spammed</h3>
+<p>If your app calls a paid AI API, one bot looping your endpoint can cost you thousands overnight.</p>
+<blockquote>
+<p>Check whether endpoints that call paid AI APIs require login and have rate limiting. Report any that don't.</p>
+</blockquote>
+<p><strong>Also do this today:</strong> set a spending cap or budget alert in every AI and cloud account you use.</p>
+<h3>10. Debug mode is off</h3>
+<blockquote>
+<p>Check for debug: true, DEBUG=True, verbose error pages, or test/debug routes that would be live in production.</p>
+</blockquote>
+<hr />
+<h2>Found something scary?</h2>
+<p>Fix it, and <strong>rotate any key that was ever exposed</strong>. Deleting it from the code isn't enough, because bots copy keys within minutes.</p>
+<h2>Want someone to check it for you?</h2>
+<p>The <strong>Ship-Ready Check</strong> runs all of this (and more) on your repo and sends a plain-English report within 24 hours.</p>
+<ul>
+<li><strong>Quick Scan, $29:</strong> a prioritized list of what's wrong and how to fix it.</li>
+<li><strong>Full, $79:</strong> the same, plus copy-paste fix prompts for your coding agent and a free re-scan.</li>
+</ul>
+<p>https://shipreadycheck-dev.github.io</p>
+<p><em>This checklist lowers your risk. It can't guarantee your app is secure.</em></p>
+<div class="cta">Want this for your app? <a href="./#pricing">Get your Ship-Ready Check</a>, from $29, report within 24 hours.</div>
+</div></body></html>

@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sample report: Ship-Ready Check</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#EEF1F4;--panel:#fff;--ink:#1C2433;--soft:#4A5568;--rule:#C9D1DB;--tag:#F2C230;--crit:#B4261F;--focus:#2457C5}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#141A24;--panel:#1C2433;--ink:#E8ECF2;--soft:#A7B1C0;--rule:#2F3A4C;--tag:#E6B422;--crit:#F0716A;--focus:#7AA2F7}}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Archivo,system-ui,sans-serif;font-size:17px;line-height:1.6}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.wrap{max-width:780px;margin:0 auto;padding:24px 20px 80px}
+.back{display:inline-block;margin-bottom:28px;color:var(--soft)}
+h1{font-stretch:120%;font-weight:900;font-size:clamp(30px,5vw,44px);line-height:1.05;margin:0 0 16px}
+h2{font-stretch:112%;font-weight:850;font-size:26px;margin:44px 0 12px;padding-top:20px;border-top:2px solid var(--ink)}
+h3{font-size:20px;margin:36px 0 8px}
+blockquote{margin:20px 0;padding:18px 22px;background:var(--tag);color:#2A2100;border-radius:12px}
+blockquote p{margin:6px 0}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:15px}
+th,td{border:1px solid var(--rule);padding:8px 10px;text-align:left}
+code{font-family:"JetBrains Mono",monospace;font-size:.85em;background:var(--panel);padding:1px 5px;border-radius:4px}
+pre{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:16px;overflow-x:auto;white-space:pre-wrap}
+pre code{padding:0;background:none}
+.cta{margin-top:48px;padding:26px;border:2px solid var(--ink);border-radius:14px;background:var(--panel)}
+.cta a{font-weight:700}
+</style></head><body><div class="wrap">
+<a class="back" href="./">Back to Ship-Ready Check</a>
+<h1>Ship-Ready Check Report (SAMPLE)</h1>
+<p><strong>Project:</strong> NoteNest (demo app built to show what a report looks like; not a real customer)
+<strong>Order:</strong> SAMPLE-001 · <strong>Tier:</strong> Full · <strong>Scanned:</strong> Oct 15, 2026
+<strong>Source checked:</strong> zip upload</p>
+<blockquote>
+<p><strong>ROTATE THESE KEYS NOW, before reading anything else.</strong>
+1. <strong>OpenAI key</strong> found in <code>src/components/Chat.tsx</code>. Rotate at platform.openai.com, under API keys.
+2. <strong>Supabase service_role key</strong> found in the same file. Rotate in Supabase under Project Settings, then API.
+A key that was ever public must be treated as stolen, even after you delete it from the code.</p>
+</blockquote>
+<h2>Verdict</h2>
+<p><strong>Not ready to launch.</strong></p>
+<p>Right now a stranger could read every user's notes, use your OpenAI credits, and unlock your paid plan without paying. All of it is fixable, and most fixes take minutes with the prompts below.</p>
+<table>
+<thead>
+<tr>
+<th>Critical</th>
+<th>High</th>
+<th>Medium</th>
+<th>Low</th>
+<th>Couldn't check</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>6</td>
+<td>3</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<h2>Findings</h2>
+<h3>1. OpenAI secret key in browser code · <span style="color:var(--crit)">Critical</span></h3>
+<p><strong>Where:</strong> <code>src/components/Chat.tsx</code> line 1
+<strong>What's wrong:</strong> Your OpenAI key is written into a file that ships to every visitor's browser.
+<strong>Why it matters:</strong> Anyone can open their browser tools, copy the key, and run AI requests on your bill. Bots scan for this constantly.
+<strong>How to fix:</strong> Rotate the key, then call OpenAI only from a server route that reads the key from an environment variable.</p>
+<p><strong>Paste this into your coding agent:</strong></p>
+<pre><code>In src/components/Chat.tsx, remove the hardcoded OpenAI key on line 1.
+Create a server route at app/api/chat/route.ts that reads process.env.OPENAI_API_KEY
+and makes the OpenAI call. Change Chat.tsx to call /api/chat with fetch instead.
+Do not change the chat UI or message format.
+When done, search the whole project for &quot;sk-&quot; and confirm no keys remain outside .env files.
+</code></pre>
+<h3>2. Supabase service_role key in browser code · <span style="color:var(--crit)">Critical</span></h3>
+<p><strong>Where:</strong> <code>src/components/Chat.tsx</code> line 2
+<strong>What's wrong:</strong> The service_role key is the master key to your database, and it's in the browser.
+<strong>Why it matters:</strong> It ignores every security rule. With it, anyone can read, change or delete all your data.
+<strong>How to fix:</strong> Rotate it. The browser should only ever use the anon key.</p>
+<p><strong>Paste this into your coding agent:</strong></p>
+<pre><code>In src/components/Chat.tsx, the Supabase client on line 2 uses the service_role key.
+Change it to use process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY. If any feature breaks
+because it needed admin rights, move that one operation into a server route that uses
+SUPABASE_SERVICE_ROLE_KEY from a server-only environment variable. Do not add the
+service role key anywhere under src/. List every file you changed.
+</code></pre>
+<h3>3. Table 'profiles' has no Row Level Security · <span style="color:var(--crit)">Critical</span></h3>
+<p><strong>Where:</strong> <code>supabase/migrations/001.sql</code> line 1
+<strong>What's wrong:</strong> The profiles table has no access rules turned on.
+<strong>Why it matters:</strong> Anyone with your public Supabase key (which is in your site by design) can read every user's email.
+<strong>How to fix:</strong> Turn on RLS and add an ownership rule.</p>
+<p><strong>Paste this into your coding agent:</strong></p>
+<pre><code>Create a new migration that runs:
+  ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY &quot;own profile&quot; ON public.profiles FOR ALL USING (auth.uid() = id);
+Do not edit existing migrations. After applying, confirm in the Supabase dashboard
+that no table shows &quot;RLS disabled&quot;.
+</code></pre>
+<h3>4. Database policy lets everyone through · <span style="color:var(--crit)">Critical</span></h3>
+<p><strong>Where:</strong> <code>supabase/migrations/001.sql</code> line 4
+<strong>What's wrong:</strong> Notes has RLS on, but its rule is <code>USING (true)</code>, which means "allow everyone."
+<strong>Why it matters:</strong> This is the exact pattern behind CVE-2025-48757, which exposed data in 170+ apps. Every user can read every other user's notes.
+<strong>How to fix:</strong> Replace it with a rule that checks the note belongs to the user.</p>
+<p><strong>Paste this into your coding agent:</strong></p>
+<pre><code>Create a new migration that drops the &quot;read&quot; policy on public.notes and replaces it with:
+  CREATE POLICY &quot;own notes&quot; ON public.notes FOR SELECT USING (auth.uid() = user_id);
+Add matching INSERT, UPDATE and DELETE policies using the same check.
+Then sign in as two test users and confirm user A cannot see user B's notes.
+</code></pre>
+<h3>5. .env file with values is in the project · <span style="color:var(--crit)">Critical</span></h3>
+<p><strong>Where:</strong> <code>.env</code> line 1
+<strong>What's wrong:</strong> Your real environment file was included in the code.
+<strong>Why it matters:</strong> If the repo is ever public, every key in it is public.
+<strong>How to fix:</strong> Remove it from the repo, rotate its keys, add <code>.env*</code> to <code>.gitignore</code> (see finding 10).</p>
+<h3>6. Secret-sounding variable exposed to the browser · <span style="color:var(--crit)">Critical</span></h3>
+<p><strong>Where:</strong> <code>.env</code> line 2 (<code>NEXT_PUBLIC_OPENAI_SECRET</code>)
+<strong>What's wrong:</strong> Anything starting with <code>NEXT_PUBLIC_</code> is copied into your website.
+<strong>Why it matters:</strong> The name says secret, but the prefix makes it public.
+<strong>How to fix:</strong> Rename it without the prefix and only read it in server code.</p>
+<h3>7. Payment amount taken from the request · High</h3>
+<p><strong>Where:</strong> <code>app/api/checkout.ts</code> line 1
+<strong>What's wrong:</strong> The price comes from what the browser sends.
+<strong>Why it matters:</strong> A buyer can edit the request and pay $0.01 for anything.
+<strong>How to fix:</strong> Look up the price on the server.</p>
+<p><strong>Paste this into your coding agent:</strong></p>
+<pre><code>In app/api/checkout.ts, stop reading the price from req.body. Accept only a productId,
+look up the price from a server-side list or a Stripe Price ID, and pass that to
+stripe.checkout.sessions.create. Reject unknown productIds with a 400 error.
+</code></pre>
+<h3>8. Stripe webhook does not verify the signature · High</h3>
+<p><strong>Where:</strong> <code>app/api/stripe/webhook/route.ts</code> line 1
+<strong>What's wrong:</strong> The webhook believes any request that says "payment completed."
+<strong>Why it matters:</strong> Anyone can send a fake message and get your paid plan free.
+<strong>How to fix:</strong> Verify Stripe's signature before trusting the event.</p>
+<p><strong>Paste this into your coding agent:</strong></p>
+<pre><code>In app/api/stripe/webhook/route.ts, read the raw request body as text (not JSON) and verify it with
+stripe.webhooks.constructEvent(rawBody, req.headers.get(&quot;stripe-signature&quot;), process.env.STRIPE_WEBHOOK_SECRET).
+Return 400 if verification throws. Store processed event IDs and skip duplicates.
+Test with: stripe listen --forward-to localhost:3000/api/stripe/webhook
+</code></pre>
+<h3>9. Package 'strpe' looks like a misspelling of 'stripe' · High</h3>
+<p><strong>Where:</strong> <code>package.json</code>
+<strong>What's wrong:</strong> A dependency name is one letter off a popular package.
+<strong>Why it matters:</strong> Look-alike packages are a known way attackers slip malware into AI-written projects.
+<strong>How to fix:</strong> Remove <code>strpe</code> and install <code>stripe</code>.</p>
+<h3>10. .env files are not in .gitignore · Medium</h3>
+<p><strong>Where:</strong> <code>.gitignore</code>
+<strong>How to fix:</strong> Add <code>.env*</code> and <code>!.env.example</code>.</p>
+<h3>11. Paid AI API calls with no rate limiting · Medium</h3>
+<p><strong>Where:</strong> <code>app/api/chat/route.ts</code>
+<strong>Why it matters:</strong> One bot calling this in a loop can run up your AI bill overnight.
+<strong>How to fix:</strong> Add a per-user rate limit and set a monthly spending cap in your OpenAI account settings.</p>
+<h2>What we did not check</h2>
+<p>We reviewed the code you sent. We did not log in to your live app or dashboards, run a penetration test, or check business logic specific to your app.
+<strong>No guarantee:</strong> this report lowers your risk. It cannot prove your app is secure.</p>
+<h2>Your next step</h2>
+<p>Apply the fixes, push, and reply "rescan" within 14 days for your free re-scan.</p>
+<p><em>Your code was deleted after this report was written.</em></p>
+<div class="cta">Want this for your app? <a href="./#pricing">Get your Ship-Ready Check</a>, from $29, report within 24 hours.</div>
+</div></body></html>

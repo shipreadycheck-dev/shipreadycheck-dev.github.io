@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ship-Ready Check: a security check for AI-built apps</title>
+<meta name="description" content="Built your app with Lovable, Bolt, Cursor or Claude Code? Get a plain-English security report within 24 hours. No install, no terminal. From $29.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF1F4; --panel:#FFFFFF; --ink:#1C2433; --soft:#4A5568; --rule:#C9D1DB;
+  --tag:#F2C230; --tag-ink:#3A2E00; --crit:#B4261F; --high:#B85C00; --pass:#2E7D4F;
+  --focus:#2457C5;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#141A24; --panel:#1C2433; --ink:#E8ECF2; --soft:#A7B1C0; --rule:#2F3A4C;
+    --tag:#E6B422; --tag-ink:#2A2100; --crit:#F0716A; --high:#F0A050; --pass:#5FC08A; --focus:#7AA2F7;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Archivo",system-ui,sans-serif;font-size:18px;line-height:1.55}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px;border-radius:4px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+code,.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.82em}
+
+/* header */
+.top{display:flex;justify-content:space-between;align-items:center;padding:22px 0}
+.brand{font-weight:800;font-stretch:115%;font-size:20px;text-decoration:none;display:flex;gap:10px;align-items:center}
+.brand i{width:14px;height:14px;border-radius:50%;background:var(--tag);box-shadow:0 0 0 3px var(--ink);display:inline-block}
+.top nav a{margin-left:22px;text-decoration:none;color:var(--soft);font-size:16px}
+.top nav a:hover{color:var(--ink)}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center;padding:48px 0 88px}
+h1{font-stretch:125%;font-weight:900;font-size:clamp(40px,6.2vw,76px);line-height:.98;letter-spacing:-.01em;margin:0 0 24px}
+.lede{font-size:21px;color:var(--soft);max-width:34em;margin:0 0 32px}
+.btns{display:flex;gap:14px;flex-wrap:wrap}
+.btn{display:inline-block;padding:15px 24px;border-radius:10px;font-weight:700;text-decoration:none;font-size:17px;border:2px solid var(--ink)}
+.btn.primary{background:var(--ink);color:var(--paper)}
+.btn.primary:hover{background:transparent;color:var(--ink)}
+.btn.ghost:hover{background:var(--ink);color:var(--paper)}
+.fine{font-size:15px;color:var(--soft);margin-top:16px}
+
+/* the inspection tag: the one bold element */
+.tag{position:relative;background:var(--tag);color:var(--tag-ink);border-radius:14px 14px 14px 14px;padding:34px 28px 26px;transform:rotate(2.2deg);box-shadow:0 18px 40px -18px rgba(28,36,51,.45);clip-path:polygon(0 9%,9% 0,100% 0,100% 100%,0 100%)}
+.tag::before{content:"";position:absolute;top:22px;left:22px;width:18px;height:18px;border-radius:50%;background:var(--paper);box-shadow:inset 0 0 0 3px rgba(0,0,0,.18)}
+.tag h2{font-stretch:110%;font-weight:900;font-size:30px;margin:0 0 4px 34px;line-height:1.05}
+.tag .meta{margin:0 0 18px 34px;font-size:14px;opacity:.8}
+.tag ul{list-style:none;margin:0;padding:0;border-top:2px solid rgba(0,0,0,.18)}
+.tag li{display:grid;grid-template-columns:76px 1fr;gap:12px;padding:12px 0;border-bottom:1px dashed rgba(0,0,0,.25);font-size:15.5px;line-height:1.35}
+.sev{font-weight:800;font-size:13px;padding:3px 0;border-radius:5px;text-align:center;align-self:start;color:#fff}
+.sev.c{background:#9E1F19}.sev.h{background:#8A4500}.sev.m{background:#4A5568}
+.tag li .mono{display:block;opacity:.75;margin-top:2px}
+.tag .rot{margin-top:16px;font-weight:800;font-size:15px}
+@media (prefers-reduced-motion:no-preference){
+  .tag{animation:swing 1.1s cubic-bezier(.2,.8,.2,1) both .15s}
+  @keyframes swing{from{transform:rotate(-6deg) translateY(-14px);opacity:0}to{transform:rotate(2.2deg);opacity:1}}
+}
+
+section{padding:72px 0;border-top:1px solid var(--rule)}
+h2.sec{font-stretch:118%;font-weight:850;font-size:clamp(28px,3.6vw,42px);line-height:1.08;margin:0 0 14px;max-width:22ch}
+.intro{color:var(--soft);max-width:38em;margin:0 0 36px}
+
+/* what we check: a ruled two-column list */
+.checks{display:grid;grid-template-columns:1fr 1fr;column-gap:56px}
+.check{padding:20px 0;border-bottom:1px solid var(--rule)}
+.check h3{font-size:19px;margin:0 0 4px;font-weight:750}
+.check p{margin:0;color:var(--soft);font-size:16.5px}
+
+/* steps: a real sequence */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;counter-reset:s}
+.step{counter-increment:s}
+.step::before{content:counter(s);display:block;font-stretch:125%;font-weight:900;font-size:56px;line-height:1;color:var(--tag);-webkit-text-stroke:2px var(--ink);margin-bottom:12px}
+.step h3{margin:0 0 6px;font-size:20px}
+.step p{margin:0;color:var(--soft);font-size:16.5px}
+
+/* pricing */
+.plans{display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:900px}
+.plan{background:var(--panel);border:2px solid var(--rule);border-radius:14px;padding:30px}
+.plan.full{border-color:var(--ink)}
+.plan h3{margin:0;font-size:22px;font-stretch:110%}
+.price{font-stretch:125%;font-weight:900;font-size:52px;line-height:1;margin:14px 0 6px}
+.plan .for{color:var(--soft);font-size:16px;margin:0 0 18px}
+.plan ul{margin:0 0 26px;padding-left:20px;font-size:16.5px}
+.plan li{margin:6px 0}
+.plan .btn{width:100%;text-align:center}
+
+/* honesty + free kit */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:56px}
+.split ul{padding-left:20px;color:var(--soft);font-size:16.5px}
+.kit{background:var(--panel);border-radius:14px;padding:32px;border:2px dashed var(--ink)}
+.kit h3{margin:0 0 8px;font-size:24px;font-stretch:112%}
+.kit p{color:var(--soft);margin:0 0 20px;font-size:16.5px}
+form.signup{display:flex;gap:10px;flex-wrap:wrap}
+form.signup label{position:absolute;left:-9999px}
+form.signup input{flex:1 1 220px;padding:14px 16px;font:inherit;font-size:17px;border:2px solid var(--ink);border-radius:10px;background:var(--paper);color:var(--ink)}
+form.signup button{font:inherit;font-weight:700;cursor:pointer}
+
+/* faq */
+details{border-bottom:1px solid var(--rule);padding:18px 0;max-width:46em}
+summary{font-weight:700;font-size:19px;cursor:pointer}
+details p{color:var(--soft);margin:10px 0 0;font-size:16.5px}
+
+footer{padding:40px 0 60px;color:var(--soft);font-size:15px;border-top:1px solid var(--rule)}
+
+.hero>*,.split>*,.plans>*,.checks>*,.steps>*{min-width:0}
+.tag li .mono{overflow-wrap:anywhere}
+@media (max-width:520px){
+  h1{font-size:36px;font-stretch:108%}
+  .lede{font-size:18px}
+  .btn{padding:13px 18px;font-size:16px}
+  .tag{padding:30px 20px 22px}
+  .tag li{grid-template-columns:66px 1fr;font-size:14.5px}
+}
+@media (max-width:860px){
+  .hero,.split,.plans,.checks{grid-template-columns:1fr}
+  .hero{gap:40px;padding-top:24px}
+  .steps{grid-template-columns:1fr;gap:28px}
+  .tag{transform:rotate(1deg)}
+  .top nav a:not(:last-child){display:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="./"><i aria-hidden="true"></i>Ship-Ready Check</a>
+    <nav><a href="#checks">What we check</a><a href="#pricing">Pricing</a><a href="#free">Free checklist</a></nav>
+  </header>
+
+  <main>
+  <div class="hero">
+    <div>
+      <h1>Is your AI-built app safe to launch?</h1>
+      <p class="lede">Send us your repo. Within 24 hours you get a plain-English report of what could leak your keys, your users' data, or your money, and exactly how to fix it. No install. No terminal.</p>
+      <div class="btns">
+        <a class="btn primary" href="#pricing">Check my app</a>
+        <a class="btn ghost" href="sample-report.html">See a sample report</a>
+      </div>
+      <p class="fine">Built with Lovable, Bolt, Cursor, Claude Code, Replit or v0? This is for you.</p>
+    </div>
+
+    <figure class="tag" aria-label="Example report summary">
+      <h2>Not ready to launch</h2>
+      <p class="meta">Sample report · demo app "NoteNest"</p>
+      <ul>
+        <li><span class="sev c">Critical</span><span>Your OpenAI key is in the website code. Anyone can spend your credits.<span class="mono">src/components/Chat.tsx:1</span></span></li>
+        <li><span class="sev c">Critical</span><span>Every user can read every other user's notes.<span class="mono">supabase/migrations/001.sql:4</span></span></li>
+        <li><span class="sev h">High</span><span>A fake "payment succeeded" message unlocks Pro for free.<span class="mono">app/api/stripe/webhook/route.ts</span></span></li>
+      </ul>
+      <p class="rot">+ 8 more, each with a fix you can paste into your coding agent.</p>
+    </figure>
+  </div>
+
+  <section id="checks">
+    <h2 class="sec">The mistakes AI tools make most, checked by name</h2>
+    <p class="intro">AI writes code that works on the happy path. The dangerous parts are invisible until a stranger finds them. These are the ones behind the real leaks.</p>
+    <div class="checks">
+      <div class="check"><h3>Secret keys in your website</h3><p>OpenAI, Stripe and database keys that anyone can copy from the browser.</p></div>
+      <div class="check"><h3>Database open to the public</h3><p>Supabase tables with Row Level Security off, or rules that let everyone in. Firebase left in test mode.</p></div>
+      <div class="check"><h3>Users seeing each other's data</h3><p>Pages and API routes that don't check the record belongs to who's asking.</p></div>
+      <div class="check"><h3>Free upgrades</h3><p>Unverified Stripe webhooks, prices set in the browser, success pages that unlock access.</p></div>
+      <div class="check"><h3>Surprise bills</h3><p>AI endpoints with no login or rate limit, which one bot can loop all night on your card.</p></div>
+      <div class="check"><h3>Risky leftovers</h3><p>Debug mode on, wide-open CORS, committed .env files, look-alike packages.</p></div>
+    </div>
+  </section>
+
+  <section id="how">
+    <h2 class="sec">How it works</h2>
+    <div class="steps">
+      <div class="step"><h3>Pay</h3><p>Pick Quick Scan or Full. Checkout takes a minute.</p></div>
+      <div class="step"><h3>Send your code</h3><p>Reply with a public GitHub link or a .zip. Never send passwords or live keys.</p></div>
+      <div class="step"><h3>Get your report</h3><p>Within 24 hours, by email. Your code is deleted once it's delivered.</p></div>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <h2 class="sec">One flat price. No calls, no quotes.</h2>
+    <p class="intro">Free scanners need a terminal. Human audits start around $200. This sits in between.</p>
+    <div class="plans">
+      <div class="plan">
+        <h3>Quick Scan</h3>
+        <div class="price">$29</div>
+        <p class="for">Find out what's wrong before you launch.</p>
+        <ul>
+          <li>Full check of your code</li>
+          <li>Every issue ranked by severity</li>
+          <li>Plain-English explanation and fix for each</li>
+          <li>Report within 24 hours</li>
+        </ul>
+        <a class="btn ghost" href="{{STRIPE_LINK_QUICK}}">Get Quick Scan</a>
+      </div>
+      <div class="plan full">
+        <h3>Full Check</h3>
+        <div class="price">$79</div>
+        <p class="for">Get it fixed, and confirm the fix worked.</p>
+        <ul>
+          <li>Everything in Quick Scan</li>
+          <li>Copy-paste fix prompts for your coding agent</li>
+          <li>One free re-scan after you fix</li>
+          <li>Reviewed by a person before it's sent</li>
+        </ul>
+        <a class="btn primary" href="{{STRIPE_LINK_FULL}}">Get Full Check</a>
+      </div>
+    </div>
+    <p class="fine">Already bought Quick Scan? Upgrade to Full for the $50 difference within 14 days.</p>
+  </section>
+
+  <section id="free">
+    <div class="split">
+      <div>
+        <h2 class="sec">What this is, and what it isn't</h2>
+        <ul>
+          <li>A careful review of the code you send, focused on the mistakes AI tools actually make.</li>
+          <li>Not a penetration test. We don't log in to your live app or dashboards.</li>
+          <li>Not a guarantee. It lowers your risk; nothing can prove an app is secure.</li>
+          <li>Handling payments at scale, health data or sensitive records? Get a professional audit too.</li>
+        </ul>
+      </div>
+      <div class="kit">
+        <h3>Check it yourself first, free</h3>
+        <p>The 10-Minute Pre-Launch Security Checklist, with a prompt for each check you can paste into your coding agent. Plus our Starter Kit: rules files that stop your agent from leaking keys or touching production.</p>
+        <form class="signup" action="{{NEWSLETTER_FORM_ACTION}}" method="post">
+          <label for="email">Email address</label>
+          <input id="email" name="email" type="email" required placeholder="you@example.com" autocomplete="email">
+          <button class="btn primary" type="submit">Send me the checklist</button>
+        </form>
+        <p class="fine">One email with the download, then the occasional security tip. Unsubscribe anytime.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <h2 class="sec">Questions</h2>
+    <details><summary>I'm not a programmer. Will I understand the report?</summary><p>Yes. Every issue says what's wrong, why it matters in plain English, and what to do. The Full Check gives you prompts to paste straight into the tool you built with.</p></details>
+    <details><summary>Is it safe to send my code?</summary><p>Send a public repo link or a .zip, never passwords or live keys. We only read your code; we never run it. It's deleted once your report is delivered. If we find an exposed key, the report tells you to rotate it first.</p></details>
+    <details><summary>My repo is private.</summary><p>Download it as a .zip (on GitHub: Code, then Download ZIP) and send that instead.</p></details>
+    <details><summary>What stacks do you cover?</summary><p>Best coverage: Next.js, React, Vite, Supabase, Firebase, Stripe, and apps calling OpenAI, Anthropic or Gemini. Other stacks get the general checks; we'll say clearly what we couldn't check.</p></details>
+    <details><summary>What if you find nothing?</summary><p>Then you launch with more confidence, and the report shows exactly what was checked.</p></details>
+    <details><summary>Refunds?</summary><p>If we can't deliver your report within 24 hours, or can't check your project at all, you get a full refund.</p></details>
+  </section>
+  </main>
+
+  <footer>
+    Ship-Ready Check · <a href="terms.html">Terms</a> · Questions: <a href="mailto:shipreadycheck@gmail.com">shipreadycheck@gmail.com</a>
+  </footer>
+</div>
+</body>
+</html>
