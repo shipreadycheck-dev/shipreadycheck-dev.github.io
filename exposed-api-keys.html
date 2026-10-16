@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Is your API key exposed in your AI-built app? How to check in 2 minutes</title>
+<meta name="description" content="How to find OpenAI, Stripe, Gemini or Supabase secret keys leaking from an app built with Lovable, Bolt, Cursor or Claude Code, and what to do if you find one.">
+<link rel="canonical" href="https://shipreadycheck-dev.github.io/exposed-api-keys.html">
+<meta property="og:title" content="Is your API key exposed in your AI-built app? How to check in 2 minutes"><meta property="og:description" content="How to find OpenAI, Stripe, Gemini or Supabase secret keys leaking from an app built with Lovable, Bolt, Cursor or Claude Code, and what to do if you find one."><meta property="og:type" content="article"><meta property="og:url" content="https://shipreadycheck-dev.github.io/exposed-api-keys.html">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "Is your API key exposed in your AI-built app? How to check in 2 minutes", "description": "How to find OpenAI, Stripe, Gemini or Supabase secret keys leaking from an app built with Lovable, Bolt, Cursor or Claude Code, and what to do if you find one.", "dateModified": "2026-10-15", "author": {"@type": "Organization", "name": "Ship-Ready Check", "url": "https://shipreadycheck-dev.github.io"}, "mainEntityOfPage": "https://shipreadycheck-dev.github.io/exposed-api-keys.html"}</script>
+<style>:root{--paper:#EEF1F4;--panel:#fff;--ink:#1C2433;--soft:#4A5568;--rule:#C9D1DB;--tag:#F2C230;--focus:#2457C5}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#141A24;--panel:#1C2433;--ink:#E8ECF2;--soft:#A7B1C0;--rule:#2F3A4C;--tag:#E6B422;--focus:#7AA2F7}}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Archivo,system-ui,sans-serif;font-size:18px;line-height:1.65}
+a{color:inherit}:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.wrap{max-width:740px;margin:0 auto;padding:24px 20px 80px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:36px;font-size:16px}
+.brand{font-weight:800;font-stretch:115%;text-decoration:none;display:flex;gap:10px;align-items:center}
+.brand i{width:12px;height:12px;border-radius:50%;background:var(--tag);box-shadow:0 0 0 3px var(--ink);display:inline-block}
+.top a.cta{text-decoration:none;font-weight:700;border:2px solid var(--ink);border-radius:9px;padding:7px 14px}
+h1{font-stretch:118%;font-weight:900;font-size:clamp(30px,5vw,44px);line-height:1.08;margin:0 0 18px}
+h2{font-stretch:110%;font-weight:850;font-size:26px;margin:44px 0 10px}
+h3{font-size:20px;margin:30px 0 6px}
+blockquote{margin:16px 0;padding:16px 20px;background:var(--tag);color:#2A2100;border-radius:12px}
+blockquote p{margin:0}
+table{border-collapse:collapse;width:100%;font-size:16px;margin:12px 0}
+th,td{border:1px solid var(--rule);padding:8px 10px;text-align:left;vertical-align:top}
+code{font-family:"JetBrains Mono",monospace;font-size:.84em;background:var(--panel);padding:1px 5px;border-radius:4px}
+pre{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:16px;overflow-x:auto}
+pre code{background:none;padding:0}
+.meta{color:var(--soft);font-size:15px;margin:-6px 0 28px}
+.box{margin-top:48px;padding:26px;border:2px solid var(--ink);border-radius:14px;background:var(--panel)}
+.box h2{margin-top:0}
+.list a{display:block;padding:18px 0;border-bottom:1px solid var(--rule);text-decoration:none}
+.list a strong{display:block;font-size:20px}.list a span{color:var(--soft);font-size:16px}
+footer{margin-top:56px;color:var(--soft);font-size:15px}</style></head><body><div class="wrap">
+<header class="top"><a class="brand" href="./"><i aria-hidden="true"></i>Ship-Ready Check</a><a class="cta" href="./#pricing">Check my app</a></header>
+<main>
+<h1>Is your API key exposed in your AI-built app? How to check in 2 minutes</h1>
+<p class="meta">Ship-Ready Check · Updated October 15, 2026</p>
+<p>Ask an AI tool to "add ChatGPT to my app" or "connect Stripe", and the fastest way to make it work is to paste the secret key straight into the code. It works on the first try. It also means anyone visiting your site can copy the key and spend your money.</p>
+<p>This guide shows you how to check your own app in about two minutes, and what to do if you find a key.</p>
+<h2>Why it's expensive</h2>
+<p>Bots scan public websites and code for keys constantly. Once one is found, it gets used fast.</p>
+<p>In February 2026, a small team's stolen Google API key ran up <strong>about $82,000 in Gemini charges in 48 hours</strong>, on an account that normally spent around $180 a month. Google treated it as the customer's responsibility under its shared-responsibility model, as <a href="https://theregister.com/2026/03/03/gemini_api_key_82314_dollar_charge/">The Register reported</a>.</p>
+<p>There's a twist that catches even careful builders: researchers found that Google API keys created for public use, like Maps, <a href="https://zuplo.com/blog/google-api-key-gemini-vulnerability-lessons">can quietly gain access to Gemini</a> once the Gemini API is enabled on the same project. A key that was safe to publish last year may not be safe today.</p>
+<h2>Which keys are safe to be public</h2>
+<p>Not every key is a secret. Here's the short version:</p>
+<table>
+<thead>
+<tr>
+<th>Safe in your website</th>
+<th>Never in your website</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Stripe publishable key (<code>pk_...</code>)</td>
+<td>Stripe secret key (<code>sk_live_...</code>, <code>rk_live_...</code>)</td>
+</tr>
+<tr>
+<td>Supabase <strong>anon</strong> key</td>
+<td>Supabase <strong>service_role</strong> key</td>
+</tr>
+<tr>
+<td>Firebase <code>apiKey</code></td>
+<td>OpenAI, Anthropic or Gemini keys</td>
+</tr>
+<tr>
+<td></td>
+<td>Database URLs with a password in them</td>
+</tr>
+<tr>
+<td></td>
+<td>AWS keys (<code>AKIA...</code>), GitHub tokens (<code>ghp_...</code>)</td>
+</tr>
+</tbody>
+</table>
+<h2>The 2-minute check</h2>
+<h3>1. Look at what your website sends to visitors</h3>
+<p>Open your live app in Chrome, right-click, and choose <strong>Inspect</strong>. Go to the <strong>Sources</strong> tab, press <strong>Ctrl+Shift+F</strong> (or <strong>Cmd+Option+F</strong> on a Mac) to search all files, and search for each of these one at a time:</p>
+<ul>
+<li><code>sk-</code> (OpenAI and Anthropic keys)</li>
+<li><code>sk_live</code> (Stripe)</li>
+<li><code>service_role</code> (Supabase)</li>
+<li><code>AIza</code> (Google)</li>
+</ul>
+<p>Anything you find there, every visitor can find too.</p>
+<h3>2. Check your variable names</h3>
+<p>Frameworks copy certain variables into the website automatically, based on their prefix: <code>NEXT_PUBLIC_</code>, <code>VITE_</code>, <code>REACT_APP_</code> and <code>EXPO_PUBLIC_</code>. If a variable with one of those prefixes holds a secret, it's public, whatever its name says. <code>NEXT_PUBLIC_OPENAI_SECRET</code> is not a secret.</p>
+<h3>3. Check your repo</h3>
+<p>If your code is on GitHub, check that your <code>.env</code> file isn't in it and that <code>.gitignore</code> contains <code>.env*</code>. Then paste this into your coding agent:</p>
+<blockquote>
+<p>Search this project for API keys or secrets written directly in code, including OpenAI, Anthropic, Stripe secret keys, Supabase service_role keys, Google keys, AWS keys and database URLs with passwords. List every file and line. Do not change anything yet.</p>
+</blockquote>
+<h2>Found one? Do this, in this order</h2>
+<ol>
+<li><strong>Rotate the key first.</strong> Create a new key in the provider's dashboard and delete the old one. Deleting the key from your code is not enough, because a copy may already exist.</li>
+<li><strong>Move the call to your server.</strong> Your website should call your own backend route, and that route calls OpenAI or Stripe using a key stored in a server-only environment variable.</li>
+<li><strong>Put a limit on it.</strong> Set a spending cap or budget alert with every AI and cloud provider you use, and add a per-user rate limit to any endpoint that calls a paid API.</li>
+<li><strong>Check your bill</strong> for usage you don't recognize.</li>
+</ol>
+<div class="box"><h2>Want someone to check it for you?</h2>
+<p>The free <a href="https://shipreadycheck-dev.github.io/#free">10-Minute Pre-Launch Security Checklist</a> walks you through this and nine other checks.</p>
+<p>Or send us your repo. The <a href="https://shipreadycheck-dev.github.io/#pricing">Ship-Ready Check</a> finds exposed keys, open databases, unverified payments and more, and sends a plain-English report within 24 hours. From $29.</p></div></main>
+<footer><a href="guides.html">More guides</a> · <a href="./">Ship-Ready Check</a> · <a href="terms.html">Terms</a></footer>
+</div></body></html>

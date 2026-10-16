@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Can people get your paid plan for free? Checking Stripe in a vibe-coded app</title>
+<meta name="description" content="How unverified Stripe webhooks and browser-set prices let people unlock paid features without paying in apps built with AI tools, and how to check and fix yours.">
+<link rel="canonical" href="https://shipreadycheck-dev.github.io/stripe-webhook-security.html">
+<meta property="og:title" content="Can people get your paid plan for free? Checking Stripe in a vibe-coded app"><meta property="og:description" content="How unverified Stripe webhooks and browser-set prices let people unlock paid features without paying in apps built with AI tools, and how to check and fix yours."><meta property="og:type" content="article"><meta property="og:url" content="https://shipreadycheck-dev.github.io/stripe-webhook-security.html">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "Can people get your paid plan for free? Checking Stripe in a vibe-coded app", "description": "How unverified Stripe webhooks and browser-set prices let people unlock paid features without paying in apps built with AI tools, and how to check and fix yours.", "dateModified": "2026-10-15", "author": {"@type": "Organization", "name": "Ship-Ready Check", "url": "https://shipreadycheck-dev.github.io"}, "mainEntityOfPage": "https://shipreadycheck-dev.github.io/stripe-webhook-security.html"}</script>
+<style>:root{--paper:#EEF1F4;--panel:#fff;--ink:#1C2433;--soft:#4A5568;--rule:#C9D1DB;--tag:#F2C230;--focus:#2457C5}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#141A24;--panel:#1C2433;--ink:#E8ECF2;--soft:#A7B1C0;--rule:#2F3A4C;--tag:#E6B422;--focus:#7AA2F7}}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Archivo,system-ui,sans-serif;font-size:18px;line-height:1.65}
+a{color:inherit}:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.wrap{max-width:740px;margin:0 auto;padding:24px 20px 80px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:36px;font-size:16px}
+.brand{font-weight:800;font-stretch:115%;text-decoration:none;display:flex;gap:10px;align-items:center}
+.brand i{width:12px;height:12px;border-radius:50%;background:var(--tag);box-shadow:0 0 0 3px var(--ink);display:inline-block}
+.top a.cta{text-decoration:none;font-weight:700;border:2px solid var(--ink);border-radius:9px;padding:7px 14px}
+h1{font-stretch:118%;font-weight:900;font-size:clamp(30px,5vw,44px);line-height:1.08;margin:0 0 18px}
+h2{font-stretch:110%;font-weight:850;font-size:26px;margin:44px 0 10px}
+h3{font-size:20px;margin:30px 0 6px}
+blockquote{margin:16px 0;padding:16px 20px;background:var(--tag);color:#2A2100;border-radius:12px}
+blockquote p{margin:0}
+table{border-collapse:collapse;width:100%;font-size:16px;margin:12px 0}
+th,td{border:1px solid var(--rule);padding:8px 10px;text-align:left;vertical-align:top}
+code{font-family:"JetBrains Mono",monospace;font-size:.84em;background:var(--panel);padding:1px 5px;border-radius:4px}
+pre{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:16px;overflow-x:auto}
+pre code{background:none;padding:0}
+.meta{color:var(--soft);font-size:15px;margin:-6px 0 28px}
+.box{margin-top:48px;padding:26px;border:2px solid var(--ink);border-radius:14px;background:var(--panel)}
+.box h2{margin-top:0}
+.list a{display:block;padding:18px 0;border-bottom:1px solid var(--rule);text-decoration:none}
+.list a strong{display:block;font-size:20px}.list a span{color:var(--soft);font-size:16px}
+footer{margin-top:56px;color:var(--soft);font-size:15px}</style></head><body><div class="wrap">
+<header class="top"><a class="brand" href="./"><i aria-hidden="true"></i>Ship-Ready Check</a><a class="cta" href="./#pricing">Check my app</a></header>
+<main>
+<h1>Can people get your paid plan for free? Checking Stripe in a vibe-coded app</h1>
+<p class="meta">Ship-Ready Check · Updated October 15, 2026</p>
+<p>You asked your AI tool for Stripe payments. The test card went through, the success page says thank you, and the user got Pro. It works, so it feels done.</p>
+<p>But there are three quiet mistakes AI tools often make in payment code, and each one can let someone get your paid plan without paying. This guide shows how to check for all three.</p>
+<h2>How Stripe tells your app someone paid</h2>
+<p>When a customer pays, Stripe sends a message to your server called a <strong>webhook</strong>. It says something like "checkout completed for this customer". Your app reads it and unlocks their plan.</p>
+<p><strong>Think of it like this:</strong> a webhook is a letter saying "this person paid". If your app believes any letter that says so, anyone can write one.</p>
+<h2>Mistake 1: the webhook doesn't check it's really from Stripe</h2>
+<p>Stripe signs every webhook with a secret only you and Stripe know. Your code has to check that signature. If it doesn't, anyone can send your server a fake "payment succeeded" message.</p>
+<p>AI-generated code often skips this check, and it <a href="https://vibe-eval.com/patterns/stripe-webhook-and-paid-trust/">shows up across many vibe-coded apps</a>. A safe handler looks roughly like this:</p>
+<pre><code class="language-js">const event = stripe.webhooks.constructEvent(
+  rawBody,                                  // the raw request body, not parsed JSON
+  req.headers[&quot;stripe-signature&quot;],
+  process.env.STRIPE_WEBHOOK_SECRET
+);
+</code></pre>
+<p>Two details matter. First, it must use the <strong>raw</strong> request body. Many apps parse the body as JSON first, and then the check can never pass. Second, if <code>constructEvent</code> throws, the handler must reject the request instead of carrying on.</p>
+<h2>Mistake 2: the price comes from the browser</h2>
+<p>If your checkout code sends the price from the page to your server, like <code>unit_amount: req.body.price</code>, a buyer can edit that request and pay one cent for anything. The server should accept only a product ID and look up the real price itself, or use a Stripe Price ID.</p>
+<h2>Mistake 3: the success page unlocks access</h2>
+<p>Some apps unlock Pro when the user lands on <code>/success</code>. Anyone can type that address. Access should come only from a verified webhook, never from visiting a page.</p>
+<h2>How to check your own app</h2>
+<p>Paste this into your coding agent:</p>
+<blockquote>
+<p>Check the Stripe integration. 1) Does the webhook handler verify the signature with stripe.webhooks.constructEvent on the raw request body, and reject the request if it fails? 2) Is every price set on the server, never taken from the browser? 3) Does access come only from the verified webhook, not from the success page? 4) Does the handler ignore duplicate event IDs? Show me the code for each answer. Do not change anything yet.</p>
+</blockquote>
+<p>Then test it yourself. With the <a href="https://docs.stripe.com/stripe-cli">Stripe CLI</a>, forward real signed test events to your local app:</p>
+<pre><code>stripe listen --forward-to localhost:3000/api/stripe/webhook
+</code></pre>
+<p>Then send the same endpoint an unsigned request, with no Stripe signature. A correct handler accepts the real event and rejects the fake one with an error. If both succeed, you have Mistake 1.</p>
+<h2>How to fix it</h2>
+<ol>
+<li>Verify every webhook with <code>constructEvent</code> on the raw body, using the signing secret from your Stripe dashboard.</li>
+<li>Set prices on the server only.</li>
+<li>Unlock access only from the verified <code>checkout.session.completed</code> event, and store processed event IDs so a retried event doesn't grant access twice.</li>
+<li>Remove any logic that unlocks access from the success page.</li>
+</ol>
+<div class="box"><h2>Want someone to check it for you?</h2>
+<p>The free <a href="https://shipreadycheck-dev.github.io/#free">10-Minute Pre-Launch Security Checklist</a> includes a payment check with a ready-to-paste prompt.</p>
+<p>Or send us your repo. The <a href="https://shipreadycheck-dev.github.io/#pricing">Ship-Ready Check</a> checks your payment flow, database rules and keys, and sends a plain-English report within 24 hours. From $29.</p></div></main>
+<footer><a href="guides.html">More guides</a> · <a href="./">Ship-Ready Check</a> · <a href="terms.html">Terms</a></footer>
+</div></body></html>

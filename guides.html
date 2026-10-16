@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Security guides for AI-built apps | Ship-Ready Check</title>
+<meta name="description" content="Plain-English guides to the security mistakes AI coding tools make: exposed keys, open Supabase databases, unverified Stripe payments.">
+<link rel="canonical" href="https://shipreadycheck-dev.github.io/guides.html">
+<meta property="og:title" content="Security guides for AI-built apps | Ship-Ready Check"><meta property="og:description" content="Plain-English guides to the security mistakes AI coding tools make: exposed keys, open Supabase databases, unverified Stripe payments."><meta property="og:type" content="website"><meta property="og:url" content="https://shipreadycheck-dev.github.io/guides.html">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>:root{--paper:#EEF1F4;--panel:#fff;--ink:#1C2433;--soft:#4A5568;--rule:#C9D1DB;--tag:#F2C230;--focus:#2457C5}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#141A24;--panel:#1C2433;--ink:#E8ECF2;--soft:#A7B1C0;--rule:#2F3A4C;--tag:#E6B422;--focus:#7AA2F7}}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Archivo,system-ui,sans-serif;font-size:18px;line-height:1.65}
+a{color:inherit}:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.wrap{max-width:740px;margin:0 auto;padding:24px 20px 80px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:36px;font-size:16px}
+.brand{font-weight:800;font-stretch:115%;text-decoration:none;display:flex;gap:10px;align-items:center}
+.brand i{width:12px;height:12px;border-radius:50%;background:var(--tag);box-shadow:0 0 0 3px var(--ink);display:inline-block}
+.top a.cta{text-decoration:none;font-weight:700;border:2px solid var(--ink);border-radius:9px;padding:7px 14px}
+h1{font-stretch:118%;font-weight:900;font-size:clamp(30px,5vw,44px);line-height:1.08;margin:0 0 18px}
+h2{font-stretch:110%;font-weight:850;font-size:26px;margin:44px 0 10px}
+h3{font-size:20px;margin:30px 0 6px}
+blockquote{margin:16px 0;padding:16px 20px;background:var(--tag);color:#2A2100;border-radius:12px}
+blockquote p{margin:0}
+table{border-collapse:collapse;width:100%;font-size:16px;margin:12px 0}
+th,td{border:1px solid var(--rule);padding:8px 10px;text-align:left;vertical-align:top}
+code{font-family:"JetBrains Mono",monospace;font-size:.84em;background:var(--panel);padding:1px 5px;border-radius:4px}
+pre{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:16px;overflow-x:auto}
+pre code{background:none;padding:0}
+.meta{color:var(--soft);font-size:15px;margin:-6px 0 28px}
+.box{margin-top:48px;padding:26px;border:2px solid var(--ink);border-radius:14px;background:var(--panel)}
+.box h2{margin-top:0}
+.list a{display:block;padding:18px 0;border-bottom:1px solid var(--rule);text-decoration:none}
+.list a strong{display:block;font-size:20px}.list a span{color:var(--soft);font-size:16px}
+footer{margin-top:56px;color:var(--soft);font-size:15px}</style></head><body><div class="wrap">
+<header class="top"><a class="brand" href="./"><i aria-hidden="true"></i>Ship-Ready Check</a><a class="cta" href="./#pricing">Check my app</a></header>
+<main>
+<h1>Security guides for AI-built apps</h1>
+<p class="meta">Plain-English fixes for the mistakes Lovable, Bolt, Cursor and Claude Code make most.</p>
+<div class="list"><a href="exposed-api-keys.html"><strong>Is your API key exposed in your AI-built app? How to check in 2 minutes</strong><span>How to find OpenAI, Stripe, Gemini or Supabase secret keys leaking from an app built with Lovable, Bolt, Cursor or Claude Code, and what to do if you find one.</span></a>
+<a href="stripe-webhook-security.html"><strong>Can people get your paid plan for free? Checking Stripe in a vibe-coded app</strong><span>How unverified Stripe webhooks and browser-set prices let people unlock paid features without paying in apps built with AI tools, and how to check and fix yours.</span></a>
+<a href="supabase-rls-check.html"><strong>Is your Lovable or Supabase app leaking its database? A 5-minute RLS check</strong><span>How to check whether Row Level Security is protecting your Supabase tables in an app built with Lovable, Bolt or Cursor, and how to fix it before launch.</span></a></div></main>
+<footer><a href="guides.html">More guides</a> · <a href="./">Ship-Ready Check</a> · <a href="terms.html">Terms</a></footer>
+</div></body></html>
