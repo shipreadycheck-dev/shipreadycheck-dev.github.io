@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Is your Lovable or Supabase app leaking its database? A 5-minute RLS check</title>
+<meta name="description" content="How to check whether Row Level Security is protecting your Supabase tables in an app built with Lovable, Bolt or Cursor, and how to fix it before launch.">
+<link rel="canonical" href="https://shipreadycheck-dev.github.io/supabase-rls-check.html">
+<meta property="og:title" content="Is your Lovable or Supabase app leaking its database? A 5-minute RLS check"><meta property="og:description" content="How to check whether Row Level Security is protecting your Supabase tables in an app built with Lovable, Bolt or Cursor, and how to fix it before launch."><meta property="og:type" content="article"><meta property="og:url" content="https://shipreadycheck-dev.github.io/supabase-rls-check.html">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "Is your Lovable or Supabase app leaking its database? A 5-minute RLS check", "description": "How to check whether Row Level Security is protecting your Supabase tables in an app built with Lovable, Bolt or Cursor, and how to fix it before launch.", "dateModified": "2026-10-15", "author": {"@type": "Organization", "name": "Ship-Ready Check", "url": "https://shipreadycheck-dev.github.io"}, "mainEntityOfPage": "https://shipreadycheck-dev.github.io/supabase-rls-check.html"}</script>
+<style>:root{--paper:#EEF1F4;--panel:#fff;--ink:#1C2433;--soft:#4A5568;--rule:#C9D1DB;--tag:#F2C230;--focus:#2457C5}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#141A24;--panel:#1C2433;--ink:#E8ECF2;--soft:#A7B1C0;--rule:#2F3A4C;--tag:#E6B422;--focus:#7AA2F7}}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Archivo,system-ui,sans-serif;font-size:18px;line-height:1.65}
+a{color:inherit}:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.wrap{max-width:740px;margin:0 auto;padding:24px 20px 80px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:36px;font-size:16px}
+.brand{font-weight:800;font-stretch:115%;text-decoration:none;display:flex;gap:10px;align-items:center}
+.brand i{width:12px;height:12px;border-radius:50%;background:var(--tag);box-shadow:0 0 0 3px var(--ink);display:inline-block}
+.top a.cta{text-decoration:none;font-weight:700;border:2px solid var(--ink);border-radius:9px;padding:7px 14px}
+h1{font-stretch:118%;font-weight:900;font-size:clamp(30px,5vw,44px);line-height:1.08;margin:0 0 18px}
+h2{font-stretch:110%;font-weight:850;font-size:26px;margin:44px 0 10px}
+h3{font-size:20px;margin:30px 0 6px}
+blockquote{margin:16px 0;padding:16px 20px;background:var(--tag);color:#2A2100;border-radius:12px}
+blockquote p{margin:0}
+table{border-collapse:collapse;width:100%;font-size:16px;margin:12px 0}
+th,td{border:1px solid var(--rule);padding:8px 10px;text-align:left;vertical-align:top}
+code{font-family:"JetBrains Mono",monospace;font-size:.84em;background:var(--panel);padding:1px 5px;border-radius:4px}
+pre{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:16px;overflow-x:auto}
+pre code{background:none;padding:0}
+.meta{color:var(--soft);font-size:15px;margin:-6px 0 28px}
+.box{margin-top:48px;padding:26px;border:2px solid var(--ink);border-radius:14px;background:var(--panel)}
+.box h2{margin-top:0}
+.list a{display:block;padding:18px 0;border-bottom:1px solid var(--rule);text-decoration:none}
+.list a strong{display:block;font-size:20px}.list a span{color:var(--soft);font-size:16px}
+footer{margin-top:56px;color:var(--soft);font-size:15px}</style></head><body><div class="wrap">
+<header class="top"><a class="brand" href="./"><i aria-hidden="true"></i>Ship-Ready Check</a><a class="cta" href="./#pricing">Check my app</a></header>
+<main>
+<h1>Is your Lovable or Supabase app leaking its database? A 5-minute RLS check</h1>
+<p class="meta">Ship-Ready Check · Updated October 15, 2026</p>
+<p>If you built your app with Lovable, Bolt, Cursor or Claude Code and it uses Supabase, there is one setting that decides whether strangers can read your users' data. It is called <strong>Row Level Security</strong>, or RLS. This guide shows you how to check it in about five minutes, without reading any code.</p>
+<h2>Why this matters</h2>
+<p>Your app's website contains a Supabase key called the <strong>anon key</strong>. That's normal: it is meant to be public, and it is how your site talks to the database. The only thing stopping someone from using that key to read or change every row in your database is RLS.</p>
+<p><strong>Think of it like this:</strong> the anon key is the front door of an apartment building. Everyone has it. RLS is the lock on each apartment. With RLS off, anyone who walks in can open every apartment.</p>
+<p>This is not a rare edge case. In 2025, researchers scanned 1,645 apps built with Lovable and found 170 of them exposing data through missing or broken RLS rules. It was catalogued as <a href="https://www.superblocks.com/blog/lovable-vulnerabilities">CVE-2025-48757</a>. In early 2026, the AI social network Moltbook was <a href="https://www.getautonoma.com/blog/vibe-coding-failures">found exposing its whole database</a> through the same mistake, days after launch.</p>
+<h2>Why AI tools get this wrong</h2>
+<p>AI coding tools usually create your tables with SQL. A table created with SQL has RLS <strong>off</strong> unless the same script turns it on. The app works perfectly in testing either way, so nothing tells you anything is wrong.</p>
+<p>There's a second, sneakier version: RLS is on, but the rule says <code>USING (true)</code>. That rule means "let everyone in", so RLS is technically enabled while doing nothing.</p>
+<h2>The 5-minute check</h2>
+<h3>1. Look for "RLS disabled" in the dashboard</h3>
+<p>Open your project in Supabase and go to the <strong>Table Editor</strong>. Click through each table. If any table that holds user data shows <strong>RLS disabled</strong>, it is readable by anyone with your public key.</p>
+<p>Supabase also has a <strong>Security Advisor</strong> (under Database or Advisors, depending on your dashboard version) that flags tables without RLS. Run it and read every warning.</p>
+<h3>2. Read the rules on tables that have RLS on</h3>
+<p>For each table, open its policies. You are looking for two red flags:</p>
+<ul>
+<li>A policy whose condition is just <code>true</code></li>
+<li>A policy that doesn't mention <code>auth.uid()</code> on a table where each row belongs to a user</li>
+</ul>
+<p>A healthy rule for a table of notes looks like this:</p>
+<pre><code class="language-sql">create policy &quot;own notes&quot; on public.notes
+  for select using (auth.uid() = user_id);
+</code></pre>
+<h3>3. Ask your coding agent to audit it</h3>
+<p>Paste this into Lovable, Cursor, Claude Code or whatever you build with:</p>
+<blockquote>
+<p>List every Supabase table and whether Row Level Security is enabled. For each policy, show its USING and WITH CHECK clauses. Flag any table holding user data with RLS off, and any policy using <code>true</code>. Do not change anything yet.</p>
+</blockquote>
+<p>Then read the answer yourself. Don't take "everything looks secure" as a final answer. Ask it to show you the policies.</p>
+<h3>4. Test it like an attacker would (optional)</h3>
+<p>Sign up as two test users in your app. Create something as user A. Log in as user B and try to see it, including by changing any ID in the page address. If user B can see user A's data, your rules are broken.</p>
+<h2>How to fix it</h2>
+<p>For each table that holds user data:</p>
+<ol>
+<li>Turn RLS on: <code>alter table public.your_table enable row level security;</code></li>
+<li>Add a policy for each action you actually use (select, insert, update, delete), each checking ownership with <code>auth.uid()</code>.</li>
+<li>Replace any <code>USING (true)</code> policy on user data.</li>
+<li>Test again with two users.</li>
+</ol>
+<p>If you ever pasted your <strong>service_role</strong> key into the app's frontend code, rotate it in Supabase right away. That key skips RLS entirely, so no rule can protect you while it's public.</p>
+<div class="box"><h2>Want a second pair of eyes?</h2>
+<p>The free <a href="https://shipreadycheck-dev.github.io/#free">10-Minute Pre-Launch Security Checklist</a> covers RLS plus nine other checks, with a prompt for each one.</p>
+<p>Or have us check it for you. The <a href="https://shipreadycheck-dev.github.io/#pricing">Ship-Ready Check</a> reviews your repo for exposed keys, RLS gaps, unverified payments and more, and sends a plain-English report within 24 hours. From $29.</p></div></main>
+<footer><a href="guides.html">More guides</a> · <a href="./">Ship-Ready Check</a> · <a href="terms.html">Terms</a></footer>
+</div></body></html>
