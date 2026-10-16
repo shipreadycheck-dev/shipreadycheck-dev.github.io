@@ -32,7 +32,7 @@ pre code{background:none;padding:0}
 .box{margin-top:48px;padding:26px;border:2px solid var(--ink);border-radius:14px;background:var(--panel)}
 .box h2{margin-top:0}
 .list a{display:block;padding:18px 0;border-bottom:1px solid var(--rule);text-decoration:none}
-.list a strong{display:block;font-size:20px}.list a span{color:var(--soft);font-size:16px}
+.list a em{display:block;font-style:normal;font-size:14px;color:var(--soft);margin-bottom:2px}.list a strong{display:block;font-size:20px}.list a span{color:var(--soft);font-size:16px}
 footer{margin-top:56px;color:var(--soft);font-size:15px}"""
 
 HEAD = """<!doctype html>
@@ -49,7 +49,7 @@ HEAD = """<!doctype html>
 <main>
 """
 FOOT = """</main>
-<footer><a href="guides.html">More guides</a> · <a href="./">Ship-Ready Check</a> · <a href="terms.html">Terms</a></footer>
+<footer><a href="guides.html">Blog</a> · <a href="./">Ship-Ready Check</a> · <a href="terms.html">Terms</a></footer>
 </div></body></html>"""
 
 
@@ -59,6 +59,7 @@ def parse(md_text):
     return meta, md_text[m.end():]
 
 
+KINDS = {"guide": "Guide", "field-notes": "Field Notes", "research": "Research"}
 guides = []
 for f in sorted((BUILD / "guides").glob("*.md")):
     meta, body = parse(f.read_text())
@@ -69,7 +70,8 @@ for f in sorted((BUILD / "guides").glob("*.md")):
                        r'<div class="box">\1</div>', body_html, flags=re.S)
     # add a dated byline under the H1
     upd = datetime.date.fromisoformat(meta["updated"])
-    body_html = body_html.replace("</h1>", f'</h1>\n<p class="meta">Ship-Ready Check · Updated {upd.strftime("%B %-d, %Y")}</p>', 1)
+    kind = KINDS.get(meta.get("type", "guide"), "Guide")
+    body_html = body_html.replace("</h1>", f'</h1>\n<p class="meta">{kind} · Ship-Ready Check · {upd.strftime("%B %-d, %Y")}</p>', 1)
     ld = {"@context": "https://schema.org", "@type": "Article", "headline": meta["title"],
           "description": meta["description"], "dateModified": meta["updated"],
           "author": {"@type": "Organization", "name": "Ship-Ready Check", "url": SITE},
@@ -81,12 +83,17 @@ for f in sorted((BUILD / "guides").glob("*.md")):
     guides.append((meta, url))
     print("wrote", meta["slug"])
 
-# index
-items = "\n".join(f'<a href="{m["slug"]}.html"><strong>{html.escape(m["title"])}</strong><span>{html.escape(m["description"])}</span></a>' for m, _ in guides)
-idx = HEAD.format(title="Security guides for AI-built apps | Ship-Ready Check",
-                  desc="Plain-English guides to the security mistakes AI coding tools make: exposed keys, open Supabase databases, unverified Stripe payments.",
+# index (the Blog): newest first
+guides.sort(key=lambda g: (g[0]["updated"], g[0]["slug"]), reverse=True)
+def _item(m):
+    d = datetime.date.fromisoformat(m["updated"]).strftime("%B %-d, %Y")
+    return (f'<a href="{m["slug"]}.html"><em>{KINDS.get(m.get("type", "guide"), "Guide")} · {d}</em>'
+            f'<strong>{html.escape(m["title"])}</strong><span>{html.escape(m["description"])}</span></a>')
+items = "\n".join(_item(m) for m, _ in guides)
+idx = HEAD.format(title="Blog: security for AI-built apps | Ship-Ready Check",
+                  desc="Guides and field notes on the security mistakes AI coding tools make: exposed keys, open Supabase databases, unverified Stripe payments.",
                   url=f"{SITE}/guides.html", ogtype="website", css=CSS, ld="") + \
-      '<h1>Security guides for AI-built apps</h1>\n<p class="meta">Plain-English fixes for the mistakes Lovable, Bolt, Cursor and Claude Code make most.</p>\n<div class="list">' + items + "</div>" + FOOT
+      '<h1>The Ship-Ready blog</h1>\n<p class="meta">Plain-English guides and field notes on what Lovable, Bolt, Cursor and Claude Code get wrong, and how to fix it.</p>\n<div class="list">' + items + "</div>" + FOOT
 (ROOT / "guides.html").write_text(idx)
 
 # sitemap + robots
