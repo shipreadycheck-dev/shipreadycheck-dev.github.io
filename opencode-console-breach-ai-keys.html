@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The OpenCode breach: your AI keys live in more places than your code</title>
+<meta name="description" content="OpenCode says AI provider keys stored in its Console may have been exposed. What happened, why it matters for AI-built apps, and how to audit your own keys today.">
+<link rel="canonical" href="https://shipreadycheck-dev.github.io/opencode-console-breach-ai-keys.html">
+<meta property="og:title" content="The OpenCode breach: your AI keys live in more places than your code"><meta property="og:description" content="OpenCode says AI provider keys stored in its Console may have been exposed. What happened, why it matters for AI-built apps, and how to audit your own keys today."><meta property="og:type" content="article"><meta property="og:url" content="https://shipreadycheck-dev.github.io/opencode-console-breach-ai-keys.html">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "The OpenCode breach: your AI keys live in more places than your code", "description": "OpenCode says AI provider keys stored in its Console may have been exposed. What happened, why it matters for AI-built apps, and how to audit your own keys today.", "dateModified": "2026-10-22", "author": {"@type": "Organization", "name": "Ship-Ready Check", "url": "https://shipreadycheck-dev.github.io"}, "mainEntityOfPage": "https://shipreadycheck-dev.github.io/opencode-console-breach-ai-keys.html"}</script>
+<style>:root{--paper:#EEF1F4;--panel:#fff;--ink:#1C2433;--soft:#4A5568;--rule:#C9D1DB;--tag:#F2C230;--focus:#2457C5}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#141A24;--panel:#1C2433;--ink:#E8ECF2;--soft:#A7B1C0;--rule:#2F3A4C;--tag:#E6B422;--focus:#7AA2F7}}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Archivo,system-ui,sans-serif;font-size:18px;line-height:1.65}
+a{color:inherit}:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.wrap{max-width:740px;margin:0 auto;padding:24px 20px 80px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:36px;font-size:16px}
+.brand{font-weight:800;font-stretch:115%;text-decoration:none;display:flex;gap:10px;align-items:center}
+.brand i{width:12px;height:12px;border-radius:50%;background:var(--tag);box-shadow:0 0 0 3px var(--ink);display:inline-block}
+.top a.cta{text-decoration:none;font-weight:700;border:2px solid var(--ink);border-radius:9px;padding:7px 14px}
+h1{font-stretch:118%;font-weight:900;font-size:clamp(30px,5vw,44px);line-height:1.08;margin:0 0 18px}
+h2{font-stretch:110%;font-weight:850;font-size:26px;margin:44px 0 10px}
+h3{font-size:20px;margin:30px 0 6px}
+blockquote{margin:16px 0;padding:16px 20px;background:var(--tag);color:#2A2100;border-radius:12px}
+blockquote p{margin:0}
+table{border-collapse:collapse;width:100%;font-size:16px;margin:12px 0}
+th,td{border:1px solid var(--rule);padding:8px 10px;text-align:left;vertical-align:top}
+code{font-family:"JetBrains Mono",monospace;font-size:.84em;background:var(--panel);padding:1px 5px;border-radius:4px}
+pre{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:16px;overflow-x:auto}
+pre code{background:none;padding:0}
+.meta{color:var(--soft);font-size:15px;margin:-6px 0 28px}
+.box{margin-top:48px;padding:26px;border:2px solid var(--ink);border-radius:14px;background:var(--panel)}
+.box h2{margin-top:0}
+.list a{display:block;padding:18px 0;border-bottom:1px solid var(--rule);text-decoration:none}
+.list a em{display:block;font-style:normal;font-size:14px;color:var(--soft);margin-bottom:2px}.list a strong{display:block;font-size:20px}.list a span{color:var(--soft);font-size:16px}
+footer{margin-top:56px;color:var(--soft);font-size:15px}</style></head><body><div class="wrap">
+<header class="top"><a class="brand" href="./"><i aria-hidden="true"></i>Ship-Ready Check</a><a class="cta" href="./#pricing">Check my app</a></header>
+<main>
+<h1>The OpenCode breach: your AI keys live in more places than your code</h1>
+<p class="meta">Field Notes · Ship-Ready Check · October 22, 2026</p>
+<p>Most advice about leaked API keys is about your code: don't paste the key into the frontend, don't commit it to GitHub. This week was a reminder that your keys also live inside the tools you use to build. When one of those tools has a bad night, your key goes with it.</p>
+<h2>What happened</h2>
+<p>OpenCode is a popular open-source AI coding agent. It also offers an optional hosted service called Console, where a team stores its own OpenAI, Anthropic or Google API key so members can use those models without seeing the key itself.</p>
+<p>According to <a href="https://thehackernews.com/2026/10/opencode-console-breach-may-have.html">The Hacker News</a>, an intruder reached a legacy OpenCode system on the night of October 16. The next morning, OpenCode emailed affected users with the subject line "Action Required: Potential provider key breach." The company said 1.4% of Console users were affected, all of them people who had linked an outside AI provider, and described the incident as related to a large-scale distillation attack. Distillation means pulling huge numbers of answers out of an AI model to train a rival one, and stolen API keys are one way to pay for it.</p>
+<p><a href="https://infosecurity-magazine.com/news/opencode-breach-openai-anthropic">Infosecurity Magazine</a> reports that OpenCode notified Anthropic, OpenAI and Google, and that co-founder Dax Raad said only the Console was involved, not OpenCode itself. The Hacker News adds that the command-line and desktop apps store keys locally, and Raad said those keys never reach OpenCode's servers.</p>
+<p>Some things are still unknown. OpenCode says keys "may have been exposed" and has not confirmed that any were copied or used, though some users publicly reported unexpected charges on their provider accounts. OpenCode has not said how the attackers got in or how many keys the system held. <a href="https://www.stepsecurity.io/blog/opencode-security-breach">StepSecurity's write-up</a> notes that, per the vendor, users who did not get the email were not affected.</p>
+<h2>Why AI-built apps keep hitting this</h2>
+<p>The usual mental model is "my key is safe as long as it isn't in my code." That model is incomplete. If you build with AI tools, your key has probably been pasted into a coding agent, a hosting dashboard, an automation tool, a team workspace and a <code>.env</code> file on your laptop. Each one is a copy you don't control.</p>
+<p>Two details from this incident are worth remembering. First, The Hacker News points out that deleting a key from Console does not revoke it. A copied key keeps working until you kill it at the provider. Second, a budget set inside a tool can't stop someone using a stolen key directly with the provider. The limits that do hold are the ones you set in your OpenAI, Anthropic or Google account.</p>
+<p>The real lesson is not "OpenCode is unsafe." It's that most founders reuse one powerful key everywhere, with no spending limit, and would not notice it being abused until the bill arrives. That's a setup problem, and it's fixable in an afternoon.</p>
+<h2>Check your own app in 5 minutes</h2>
+<ol>
+<li><strong>Search your inbox</strong> for "Action Required: Potential provider key breach." If you used OpenCode Console and got it, rotate those keys first.</li>
+<li><strong>Make a list of everywhere your AI keys live.</strong> Your app's hosting settings, your coding tools, any automation or team workspace, and files on your computer. Be honest about the "I pasted it in once to test" places.</li>
+<li><strong>Open the usage page</strong> for each AI provider you pay for. Look back at least a week for spikes, models you don't use, or activity at hours you weren't working.</li>
+<li><strong>Turn on spending limits or budget alerts</strong> in each provider's billing settings, wherever they're offered.</li>
+<li><strong>Give each tool its own key.</strong> Then if one tool leaks, you revoke one key and your live app keeps running. When you rotate, create the new key, update everything that uses it, then revoke the old one at the provider.</li>
+</ol>
+<p>Then ask your coding agent to map what's in your project:</p>
+<blockquote>
+<p>List every place in this project where an AI provider API key (OpenAI, Anthropic, Google or others) is read, stored or referenced, including env files, config files, CI settings and frontend code. For each, tell me which provider it is for and whether it could end up in the browser or in git history. Do not change anything yet.</p>
+</blockquote>
+<p>If any key shows up in frontend code or git history, treat it as already public and follow our <a href="exposed-api-keys.html">exposed API keys guide</a>.</p>
+<h2>The takeaway</h2>
+<p>Your AI key is only as safe as the least careful place you've pasted it. One key per tool, spending limits at the provider, and a quick look at usage each week turn a breach like this from a surprise bill into a five-minute rotation.</p>
+<div class="box"><h2>Want someone to check it for you?</h2>
+<p>Start with the free <a href="https://shipreadycheck-dev.github.io/#free">10-Minute Pre-Launch Security Checklist</a>, or add the free <a href="https://github.com/shipreadycheck-dev/shipready-scan">Ship-Ready Scan GitHub Action</a> to flag exposed keys on every push, before you launch.</p>
+<p>Or have us look for you. The <a href="https://shipreadycheck-dev.github.io/#pricing">Ship-Ready Check</a> reviews your repo for exposed keys, open databases, unverified payments and more, and sends a plain-English report.</p></div></main>
+<footer><a href="guides.html">Blog</a> · <a href="./">Ship-Ready Check</a> · <a href="terms.html">Terms</a></footer>
+</div></body></html>

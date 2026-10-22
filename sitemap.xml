@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://shipreadycheck-dev.github.io/</loc><lastmod>2026-10-15</lastmod></url>
-  <url><loc>https://shipreadycheck-dev.github.io/guides.html</loc><lastmod>2026-10-15</lastmod></url>
+  <url><loc>https://shipreadycheck-dev.github.io/</loc><lastmod>2026-10-22</lastmod></url>
+  <url><loc>https://shipreadycheck-dev.github.io/guides.html</loc><lastmod>2026-10-22</lastmod></url>
   <url><loc>https://shipreadycheck-dev.github.io/checklist.html</loc><lastmod>2026-10-15</lastmod></url>
   <url><loc>https://shipreadycheck-dev.github.io/sample-report.html</loc><lastmod>2026-10-15</lastmod></url>
+  <url><loc>https://shipreadycheck-dev.github.io/opencode-console-breach-ai-keys.html</loc><lastmod>2026-10-22</lastmod></url>
   <url><loc>https://shipreadycheck-dev.github.io/supabase-rls-check.html</loc><lastmod>2026-10-15</lastmod></url>
   <url><loc>https://shipreadycheck-dev.github.io/stripe-webhook-security.html</loc><lastmod>2026-10-15</lastmod></url>
   <url><loc>https://shipreadycheck-dev.github.io/exposed-api-keys.html</loc><lastmod>2026-10-15</lastmod></url>
