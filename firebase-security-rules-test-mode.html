@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Is your Firebase database open to everyone? How to check your security rules</title>
+<meta name="description" content="How to check whether Firebase Security Rules left in test mode are exposing your Firestore, Realtime Database or Storage in an AI-built app, and how to fix them.">
+<link rel="canonical" href="https://shipreadycheck-dev.github.io/firebase-security-rules-test-mode.html">
+<meta property="og:title" content="Is your Firebase database open to everyone? How to check your security rules"><meta property="og:description" content="How to check whether Firebase Security Rules left in test mode are exposing your Firestore, Realtime Database or Storage in an AI-built app, and how to fix them."><meta property="og:type" content="article"><meta property="og:url" content="https://shipreadycheck-dev.github.io/firebase-security-rules-test-mode.html">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "Is your Firebase database open to everyone? How to check your security rules", "description": "How to check whether Firebase Security Rules left in test mode are exposing your Firestore, Realtime Database or Storage in an AI-built app, and how to fix them.", "dateModified": "2026-11-02", "author": {"@type": "Organization", "name": "Ship-Ready Check", "url": "https://shipreadycheck-dev.github.io"}, "mainEntityOfPage": "https://shipreadycheck-dev.github.io/firebase-security-rules-test-mode.html"}</script>
+<style>:root{--paper:#EEF1F4;--panel:#fff;--ink:#1C2433;--soft:#4A5568;--rule:#C9D1DB;--tag:#F2C230;--focus:#2457C5}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#141A24;--panel:#1C2433;--ink:#E8ECF2;--soft:#A7B1C0;--rule:#2F3A4C;--tag:#E6B422;--focus:#7AA2F7}}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Archivo,system-ui,sans-serif;font-size:18px;line-height:1.65}
+a{color:inherit}:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.wrap{max-width:740px;margin:0 auto;padding:24px 20px 80px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:36px;font-size:16px}
+.brand{font-weight:800;font-stretch:115%;text-decoration:none;display:flex;gap:10px;align-items:center}
+.brand i{width:12px;height:12px;border-radius:50%;background:var(--tag);box-shadow:0 0 0 3px var(--ink);display:inline-block}
+.top a.cta{text-decoration:none;font-weight:700;border:2px solid var(--ink);border-radius:9px;padding:7px 14px}
+h1{font-stretch:118%;font-weight:900;font-size:clamp(30px,5vw,44px);line-height:1.08;margin:0 0 18px}
+h2{font-stretch:110%;font-weight:850;font-size:26px;margin:44px 0 10px}
+h3{font-size:20px;margin:30px 0 6px}
+blockquote{margin:16px 0;padding:16px 20px;background:var(--tag);color:#2A2100;border-radius:12px}
+blockquote p{margin:0}
+table{border-collapse:collapse;width:100%;font-size:16px;margin:12px 0}
+th,td{border:1px solid var(--rule);padding:8px 10px;text-align:left;vertical-align:top}
+code{font-family:"JetBrains Mono",monospace;font-size:.84em;background:var(--panel);padding:1px 5px;border-radius:4px}
+pre{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:16px;overflow-x:auto}
+pre code{background:none;padding:0}
+.meta{color:var(--soft);font-size:15px;margin:-6px 0 28px}
+.box{margin-top:48px;padding:26px;border:2px solid var(--ink);border-radius:14px;background:var(--panel)}
+.box h2{margin-top:0}
+.list a{display:block;padding:18px 0;border-bottom:1px solid var(--rule);text-decoration:none}
+.list a em{display:block;font-style:normal;font-size:14px;color:var(--soft);margin-bottom:2px}.list a strong{display:block;font-size:20px}.list a span{color:var(--soft);font-size:16px}
+footer{margin-top:56px;color:var(--soft);font-size:15px}</style></head><body><div class="wrap">
+<header class="top"><a class="brand" href="./"><i aria-hidden="true"></i>Ship-Ready Check</a><a class="cta" href="./#pricing">Check my app</a></header>
+<main>
+<h1>Is your Firebase database open to everyone? How to check your security rules</h1>
+<p class="meta">Guide · Ship-Ready Check · November 2, 2026</p>
+<p>If your app uses Firebase and you built it with Cursor, Bolt, Claude Code, Replit or a similar tool, a short block of text called <strong>Security Rules</strong> decides who can read and change your data. This guide shows you how to read those rules and spot the open ones in about ten minutes, without being a developer.</p>
+<h2>Why this matters</h2>
+<p>Your app talks to Firebase straight from the user's browser or phone. That is how Firebase is designed, and the config values in your app (including the Firebase <code>apiKey</code>) are not meant to be secret. What protects your data is the rules on the server.</p>
+<p>When you create a Firestore database, Cloud Storage bucket or Realtime Database, Firebase asks you to pick a starting mode. <strong>Locked mode</strong> denies everyone. <strong>Test mode</strong> lets anyone in, so you can build without errors. Firebase's own <a href="https://firebase.google.com/docs/database/security/resolve-insecurities">guide to insecure rules</a> warns that with open access, anyone who guesses your project ID can steal, modify or delete the data. Its <a href="https://firebase.google.com/docs/rules/basics?hl=en">basic rules page</a> adds that once you deploy, your app is publicly accessible even if you haven't launched it yet.</p>
+<p><strong>Think of it like this:</strong> test mode is propping your shop's back door open while the shelves get stocked. That's fine on day one. If you forget about it, anyone walking by can take whatever is inside, and the shop looks completely normal from the front.</p>
+<p>This mistake is common. In 2024, researchers scanned more than 5 million websites and found 916 with Firebase set up with no rules or broken rules. GitGuardian's <a href="https://blog.gitguardian.com/misconfigurations-in-google-firebase-lead-to-over-19-8-million-leaked-secrets/">summary of that research</a> reports over 125 million user records exposed, including emails, phone numbers and billing details. In 2025, Website Planet researchers <a href="https://zendata.security/2025/05/25/massive-data-leak-exposes-passwords-of-1-8-million-users-through-misconfigured-firebase-servers/">reported publicly accessible Firebase databases</a> behind more than 900 mobile apps, exposing data on over 1.8 million users.</p>
+<h2>Why AI-built apps hit this</h2>
+<p>Coding tools are good at getting your app working. Locked rules make every read fail with a permission error, so the quickest way to "fix" that error is to open the rules up. The app then works perfectly in testing, and nothing on screen tells you the database is open to the whole internet.</p>
+<p>There's a second trap. A rule that only checks whether someone is signed in looks safe but isn't. Firebase's docs explain that a rule like <code>request.auth != null</code> lets <strong>any</strong> signed-in user read and write everything. If anyone can create an account in your app, that rule protects almost nothing.</p>
+<h2>The 10-minute check</h2>
+<h3>1. Find your rules</h3>
+<p>Open your project in the Firebase console. Open <strong>Firestore</strong>, then click the <strong>Rules</strong> tab. In newer versions of the console, Firestore sits under <strong>Databases &amp; Storage</strong>. If your app also uses <strong>Realtime Database</strong> or <strong>Storage</strong>, each one has its own Rules tab. Check every one you use.</p>
+<p>If your project has a <code>firestore.rules</code>, <code>storage.rules</code> or <code>database.rules.json</code> file, those are your rules too. Keep in mind that deploying with the Firebase CLI overwrites what's in the console, so the file and the console should match.</p>
+<h3>2. Look for the red flags</h3>
+<p>Read each rule set. These are the patterns to worry about on anything that holds user data:</p>
+<table>
+<thead>
+<tr>
+<th>Red flag</th>
+<th>What it means</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>allow read, write: if true;</code></td>
+<td>Anyone on the internet can read and change everything</td>
+</tr>
+<tr>
+<td><code>allow read, write;</code> (no condition)</td>
+<td>Same: open to everyone</td>
+</tr>
+<tr>
+<td><code>".read": true</code> or <code>".write": true</code></td>
+<td>Realtime Database version of fully open</td>
+</tr>
+<tr>
+<td><code>if request.time &lt; timestamp.date(...)</code> as the only condition</td>
+<td>Open to everyone until that date</td>
+</tr>
+<tr>
+<td><code>if request.auth != null;</code> on its own</td>
+<td>Any signed-in user can see and change every user's data</td>
+</tr>
+<tr>
+<td><code>match /{document=**}</code> with any of the above</td>
+<td>The rule applies to your whole database</td>
+</tr>
+</tbody>
+</table>
+<p>If you see a date-based rule, don't relax just because the date is in the future. Until then, the data is open.</p>
+<h3>3. Compare with a healthy rule</h3>
+<p>A safer rule ties each piece of data to its owner. This example from Firebase's docs only lets a user read and write documents stored under their own user ID:</p>
+<pre><code>service cloud.firestore {
+  match /databases/{database}/documents {
+    match /some_collection/{userId}/{document} {
+      allow read, write: if request.auth != null &amp;&amp; request.auth.uid == userId
+    }
+  }
+}
+</code></pre>
+<p>You don't need to understand every word. The key part is <code>request.auth.uid == userId</code>, which means "only the person this data belongs to."</p>
+<h3>4. Ask your coding agent to audit it</h3>
+<p>Paste this into Cursor, Claude Code, Bolt or whatever you build with:</p>
+<blockquote>
+<p>List every Firebase service this app uses (Firestore, Realtime Database, Storage) and show me the current security rules for each one. For every rule, explain in plain English who can read and who can write that data. Flag any rule that uses <code>if true</code>, has no condition, uses a <code>request.time</code> date, or only checks <code>request.auth != null</code>. Do not change anything yet.</p>
+</blockquote>
+<p>Read the answer yourself. If it says "looks secure", ask it to show you the exact rules it checked.</p>
+<h3>5. Test with two accounts</h3>
+<p>Firebase's <a href="https://firebase.google.com/docs/firestore/security/get-started">rules guide</a> describes a <strong>Rules Playground</strong> on the Rules tab that simulates requests. Note that it tests the rules in the editor, not the ones you have published, so make sure you're looking at your live rules.</p>
+<p>For a real-world check, sign up as two test users in your app. Create something as user A, then log in as user B and try to see or edit it. If user B can, your rules are too loose.</p>
+<h2>How to fix it</h2>
+<ol>
+<li><strong>Decide who should see each kind of data.</strong> Usually it's "only the owner", sometimes "anyone can read, only the owner can edit."</li>
+<li><strong>Replace open rules with owner-based ones.</strong> Ask your coding agent to write rules using <code>request.auth.uid</code> for each collection, then read what it wrote before publishing. Firebase's <a href="https://firebase.google.com/docs/database/security/resolve-insecurities">insecure rules guide</a> has examples for Firestore, Realtime Database and Storage, including mixed public and private data.</li>
+<li><strong>Remove any date-based test mode rule</strong> and any catch-all <code>match /{document=**}</code> that opens everything.</li>
+<li><strong>Publish, then retest with two users.</strong> Some screens may break because they relied on open access. Fix those by tightening the query or the rule for that one collection, never by opening the whole database again.</li>
+<li><strong>If your data was open, assume someone may have looked.</strong> Check for data you didn't create, and never store passwords in your own database. Firebase Authentication handles logins for you.</li>
+</ol>
+<div class="box"><h2>Want someone to check it for you?</h2>
+<p>The free <a href="https://shipreadycheck-dev.github.io/#free">10-Minute Pre-Launch Security Checklist</a> covers database rules plus nine other checks, with a prompt for each one.</p>
+<p>Or have us look for you. The <a href="https://shipreadycheck-dev.github.io/#pricing">Ship-Ready Check</a> reviews your repo for open database rules, exposed keys, unverified payments and more, and sends a plain-English report within 24 hours. From $29.</p></div></main>
+<footer><a href="guides.html">Blog</a> · <a href="./">Ship-Ready Check</a> · <a href="terms.html">Terms</a></footer>
+</div></body></html>
