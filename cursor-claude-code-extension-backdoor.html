@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The fake Claude Code extension in Cursor: when the right name is the attack</title>
+<meta name="description" content="A tampered Claude Code extension in Cursor&#x27;s marketplace planted a backdoor on developer machines. What happened, why it matters, and how to check yours today.">
+<link rel="canonical" href="https://shipreadycheck-dev.github.io/cursor-claude-code-extension-backdoor.html">
+<meta property="og:title" content="The fake Claude Code extension in Cursor: when the right name is the attack"><meta property="og:description" content="A tampered Claude Code extension in Cursor&#x27;s marketplace planted a backdoor on developer machines. What happened, why it matters, and how to check yours today."><meta property="og:type" content="article"><meta property="og:url" content="https://shipreadycheck-dev.github.io/cursor-claude-code-extension-backdoor.html">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "The fake Claude Code extension in Cursor: when the right name is the attack", "description": "A tampered Claude Code extension in Cursor's marketplace planted a backdoor on developer machines. What happened, why it matters, and how to check yours today.", "dateModified": "2026-11-05", "author": {"@type": "Organization", "name": "Ship-Ready Check", "url": "https://shipreadycheck-dev.github.io"}, "mainEntityOfPage": "https://shipreadycheck-dev.github.io/cursor-claude-code-extension-backdoor.html"}</script>
+<style>:root{--paper:#EEF1F4;--panel:#fff;--ink:#1C2433;--soft:#4A5568;--rule:#C9D1DB;--tag:#F2C230;--focus:#2457C5}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#141A24;--panel:#1C2433;--ink:#E8ECF2;--soft:#A7B1C0;--rule:#2F3A4C;--tag:#E6B422;--focus:#7AA2F7}}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Archivo,system-ui,sans-serif;font-size:18px;line-height:1.65}
+a{color:inherit}:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.wrap{max-width:740px;margin:0 auto;padding:24px 20px 80px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:36px;font-size:16px}
+.brand{font-weight:800;font-stretch:115%;text-decoration:none;display:flex;gap:10px;align-items:center}
+.brand i{width:12px;height:12px;border-radius:50%;background:var(--tag);box-shadow:0 0 0 3px var(--ink);display:inline-block}
+.top a.cta{text-decoration:none;font-weight:700;border:2px solid var(--ink);border-radius:9px;padding:7px 14px}
+h1{font-stretch:118%;font-weight:900;font-size:clamp(30px,5vw,44px);line-height:1.08;margin:0 0 18px}
+h2{font-stretch:110%;font-weight:850;font-size:26px;margin:44px 0 10px}
+h3{font-size:20px;margin:30px 0 6px}
+blockquote{margin:16px 0;padding:16px 20px;background:var(--tag);color:#2A2100;border-radius:12px}
+blockquote p{margin:0}
+table{border-collapse:collapse;width:100%;font-size:16px;margin:12px 0}
+th,td{border:1px solid var(--rule);padding:8px 10px;text-align:left;vertical-align:top}
+code{font-family:"JetBrains Mono",monospace;font-size:.84em;background:var(--panel);padding:1px 5px;border-radius:4px}
+pre{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:16px;overflow-x:auto}
+pre code{background:none;padding:0}
+.meta{color:var(--soft);font-size:15px;margin:-6px 0 28px}
+.box{margin-top:48px;padding:26px;border:2px solid var(--ink);border-radius:14px;background:var(--panel)}
+.box h2{margin-top:0}
+.list a{display:block;padding:18px 0;border-bottom:1px solid var(--rule);text-decoration:none}
+.list a em{display:block;font-style:normal;font-size:14px;color:var(--soft);margin-bottom:2px}.list a strong{display:block;font-size:20px}.list a span{color:var(--soft);font-size:16px}
+footer{margin-top:56px;color:var(--soft);font-size:15px}</style></head><body><div class="wrap">
+<header class="top"><a class="brand" href="./"><i aria-hidden="true"></i>Ship-Ready Check</a><a class="cta" href="./#pricing">Check my app</a></header>
+<main>
+<h1>The fake Claude Code extension in Cursor: when the right name is the attack</h1>
+<p class="meta">Field Notes · Ship-Ready Check · November 5, 2026</p>
+<p>Most founders decide whether to trust an extension once, when they install it. After that, updates arrive quietly in the background. This week showed what happens when one of those quiet updates is not what it claims to be.</p>
+<h2>What happened</h2>
+<p>On October 29, Cursor found a malicious version of the Claude Code extension (<code>anthropic.claude-code</code>) in its own extension marketplace. According to <a href="https://cursor.com/blog/claude-code-extension-security-notice">Cursor's security notice</a>, versions 2.1.312 and 2.1.313 for Windows and macOS were available from about 2:27am to 1:35pm Pacific time that day. Cursor states these versions "were not developed by Anthropic."</p>
+<p>The notice says the tampered code collected details about the computer and sent them to the attacker's server. It added the attacker's SSH key, labeled <code>svc-telemetry</code>, to the user's list of keys allowed to log in. It then tried to turn on remote login and open a hidden connection back to the attacker, and set itself up to keep retrying after a restart. Turning on remote login needs admin rights, so Cursor says that step likely failed on most machines. The key and the restart setup were written anyway.</p>
+<p><a href="https://www.microsoft.com/en-us/security/blog/2026/10/30/inside-malicious-claude-code-branded-cursor-extension-persistent-ssh-backdoor/">Microsoft's analysis</a> adds that the code also collected the names, though not the values, of environment variables containing words like KEY, TOKEN or SECRET. Microsoft found no evidence the package reached the official Visual Studio Marketplace or npm.</p>
+<p><a href="https://thehackernews.com/2026/10/official-claude-code-vs-code-extension.html">The Hacker News</a> reports that Cursor said at most 5,000 users were affected and that it will contact them directly. Cursor removed the bad versions, shut its marketplace down while it rotated keys and rebuilt it, and worked with the hosting provider to take the attacker's server offline. The current clean version is 2.1.314. How the attacker got the tampered extension into Cursor's marketplace has not been disclosed.</p>
+<h2>Why AI-built apps keep hitting this</h2>
+<p>The extension had the right name and, according to The Hacker News, was published under Anthropic's publisher identity. Nothing about it looked wrong. That was the whole attack.</p>
+<p>Here is the part most people miss: the name of an extension is not the same as where it came from. Editors like Cursor run their own marketplace. The same extension can be offered in more than one store, and each store is its own place where things can go wrong. Anthropic and Microsoft say the official channels were not affected. The copy in one store was.</p>
+<p>Founders building with AI are especially exposed for three reasons.</p>
+<p>First, we install a lot of AI extensions and plugins, often while trying a new tool on a busy afternoon. Each one is code with broad access to our computer.</p>
+<p>Second, updates are automatic. You may have reviewed an extension the day you installed it. You did not review the update that arrived on a Thursday morning.</p>
+<p>Third, our laptops hold the keys to our apps. Your OpenAI key, Supabase service key, Stripe secret key and GitHub login often live in files and settings on the same machine you code on. Even a list of their names tells an attacker what is worth going after.</p>
+<p>So treat your editor as part of your app's security, not just a place to type. If your production keys live on your laptop, your laptop is part of production.</p>
+<h2>Check your own app in 5 minutes</h2>
+<ol>
+<li><strong>Check your inbox.</strong> Look for an email from Cursor about this extension. The Hacker News reports Cursor will contact affected users directly.</li>
+<li><strong>Check the version.</strong> Open Cursor, go to Extensions, and find Claude Code. It should be 2.1.314 or later. A newer version does not prove you were never on a bad one, so if Cursor was open on October 29, do the next step too.</li>
+<li><strong>Run Cursor's one-line check.</strong> On a Mac, open Terminal and paste the command shown below this list, taken from Cursor's notice. It only reads a file. On Windows, use the PowerShell command in <a href="https://cursor.com/blog/claude-code-extension-security-notice">Cursor's notice</a>.</li>
+<li><strong>If the key is found, act in this order.</strong> Run Cursor's remediation script for your system, linked in the notice. Cursor warns that uninstalling the extension may not remove everything, and suggests considering a full rebuild of the computer. Then, from a different computer you trust, replace every key and login that machine could reach: AI provider keys, database keys, payment keys and GitHub tokens. If this feels out of your depth, get help before you keep working on that machine.</li>
+<li><strong>Trim your extensions.</strong> Remove any editor extension you don't use every week. Fewer extensions means fewer updates you have to trust.</li>
+</ol>
+<p>The Mac check from step 3:</p>
+<pre><code>grep -qs svc-telemetry ~/.ssh/authorized_keys &amp;&amp; echo &quot;svc-telemetry key found&quot; || echo &quot;No key found; machine not impacted&quot;
+</code></pre>
+<p>Then ask your coding agent for a second look:</p>
+<blockquote>
+<p>Without making any changes, check this computer for signs of the malicious Claude Code extension versions 2.1.312 and 2.1.313 from Cursor's marketplace. Tell me which version of the anthropic.claude-code extension is installed in Cursor, whether ~/.ssh/authorized_keys contains a key labeled svc-telemetry, and whether a LaunchAgent named com.apple.sysmond.plist exists. Also list the names of environment variables on this machine that hold keys or tokens, so I know what I would need to rotate. Do not change anything yet.</p>
+</blockquote>
+<p>Treat the answer as a lead, not a verdict. Cursor's own check and script are the source of truth.</p>
+<h2>The takeaway</h2>
+<p>A trusted name in your editor's store is not a guarantee of what's inside the update. Run Cursor's check if you use it, keep fewer extensions, and keep your most powerful keys off the machine where you install things. Then one bad update is far more likely to cost you an afternoon than your app.</p>
+<div class="box"><h2>Want someone to check it for you?</h2>
+<p>Start with the free <a href="https://shipreadycheck-dev.github.io/#free">10-Minute Pre-Launch Security Checklist</a>, or add the free <a href="https://github.com/shipreadycheck-dev/shipready-scan">Ship-Ready Scan GitHub Action</a> to flag exposed keys on every push.</p>
+<p>Or have us look for you. The <a href="https://shipreadycheck-dev.github.io/#pricing">Ship-Ready Check</a> reviews your repo for exposed keys, open databases, unverified payments and more, and sends a plain-English report.</p></div></main>
+<footer><a href="guides.html">Blog</a> · <a href="./">Ship-Ready Check</a> · <a href="terms.html">Terms</a></footer>
+</div></body></html>
