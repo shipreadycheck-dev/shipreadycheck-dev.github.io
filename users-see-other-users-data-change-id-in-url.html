@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Can users see each other&#x27;s data by changing an ID in the URL? How to check</title>
+<meta name="description" content="How to check whether a logged-in user can open another user&#x27;s invoices, orders or files by editing an ID in your AI-built app, and how to fix it before launch.">
+<link rel="canonical" href="https://shipreadycheck-dev.github.io/users-see-other-users-data-change-id-in-url.html">
+<meta property="og:title" content="Can users see each other&#x27;s data by changing an ID in the URL? How to check"><meta property="og:description" content="How to check whether a logged-in user can open another user&#x27;s invoices, orders or files by editing an ID in your AI-built app, and how to fix it before launch."><meta property="og:type" content="article"><meta property="og:url" content="https://shipreadycheck-dev.github.io/users-see-other-users-data-change-id-in-url.html">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "Can users see each other's data by changing an ID in the URL? How to check", "description": "How to check whether a logged-in user can open another user's invoices, orders or files by editing an ID in your AI-built app, and how to fix it before launch.", "dateModified": "2026-11-09", "author": {"@type": "Organization", "name": "Ship-Ready Check", "url": "https://shipreadycheck-dev.github.io"}, "mainEntityOfPage": "https://shipreadycheck-dev.github.io/users-see-other-users-data-change-id-in-url.html"}</script>
+<style>:root{--paper:#EEF1F4;--panel:#fff;--ink:#1C2433;--soft:#4A5568;--rule:#C9D1DB;--tag:#F2C230;--focus:#2457C5}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#141A24;--panel:#1C2433;--ink:#E8ECF2;--soft:#A7B1C0;--rule:#2F3A4C;--tag:#E6B422;--focus:#7AA2F7}}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Archivo,system-ui,sans-serif;font-size:18px;line-height:1.65}
+a{color:inherit}:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.wrap{max-width:740px;margin:0 auto;padding:24px 20px 80px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:36px;font-size:16px}
+.brand{font-weight:800;font-stretch:115%;text-decoration:none;display:flex;gap:10px;align-items:center}
+.brand i{width:12px;height:12px;border-radius:50%;background:var(--tag);box-shadow:0 0 0 3px var(--ink);display:inline-block}
+.top a.cta{text-decoration:none;font-weight:700;border:2px solid var(--ink);border-radius:9px;padding:7px 14px}
+h1{font-stretch:118%;font-weight:900;font-size:clamp(30px,5vw,44px);line-height:1.08;margin:0 0 18px}
+h2{font-stretch:110%;font-weight:850;font-size:26px;margin:44px 0 10px}
+h3{font-size:20px;margin:30px 0 6px}
+blockquote{margin:16px 0;padding:16px 20px;background:var(--tag);color:#2A2100;border-radius:12px}
+blockquote p{margin:0}
+table{border-collapse:collapse;width:100%;font-size:16px;margin:12px 0}
+th,td{border:1px solid var(--rule);padding:8px 10px;text-align:left;vertical-align:top}
+code{font-family:"JetBrains Mono",monospace;font-size:.84em;background:var(--panel);padding:1px 5px;border-radius:4px}
+pre{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:16px;overflow-x:auto}
+pre code{background:none;padding:0}
+.meta{color:var(--soft);font-size:15px;margin:-6px 0 28px}
+.box{margin-top:48px;padding:26px;border:2px solid var(--ink);border-radius:14px;background:var(--panel)}
+.box h2{margin-top:0}
+.list a{display:block;padding:18px 0;border-bottom:1px solid var(--rule);text-decoration:none}
+.list a em{display:block;font-style:normal;font-size:14px;color:var(--soft);margin-bottom:2px}.list a strong{display:block;font-size:20px}.list a span{color:var(--soft);font-size:16px}
+footer{margin-top:56px;color:var(--soft);font-size:15px}</style></head><body><div class="wrap">
+<header class="top"><a class="brand" href="./"><i aria-hidden="true"></i>Ship-Ready Check</a><a class="cta" href="./#pricing">Check my app</a></header>
+<main>
+<h1>Can users see each other's data by changing an ID in the URL? How to check</h1>
+<p class="meta">Guide · Ship-Ready Check · November 9, 2026</p>
+<p>Log in to your app and open something that belongs to you, like an invoice, an order or a saved document. Look at the address bar. If you see something like <code>/invoices/1042</code>, try changing it to <code>/invoices/1041</code>. If you can now see someone else's invoice, your app has one of the most common security bugs on the web.</p>
+<p>This guide explains what the bug is, how to check for it in about ten minutes without reading code, and how to fix it.</p>
+<h2>Why this matters</h2>
+<p>Security people call this an <strong>Insecure Direct Object Reference</strong>, or IDOR. The name is scary, but the idea is simple. <a href="https://cheatsheetseries.owasp.org/cheatsheets/Insecure_Direct_Object_Reference_Prevention_Cheat_Sheet.html">OWASP's guide to preventing it</a> describes it as people reaching data by changing an ID in a URL or request, because the app never checks whether that data is theirs. Its own example is exactly the one above: changing <code>/users/123</code> to <code>/users/124</code>.</p>
+<p>This is not only a small-app problem. In May 2019, a security journalist told First American Financial that its document-sharing site had this flaw. As <a href="https://www.axios.com/2019/05/24/first-american-mortgage-data-exposure-leaked-885-million-files">Axios reported</a>, the site sent people to an address containing a document number, and changing that number opened other people's files. About 885 million files dating back to 2003 were reachable, including bank account numbers, Social Security numbers and driver's license images. Axios noted there was no public evidence anyone had misused them. In 2021, the <a href="https://www.sec.gov/news/press-release/2021-102">SEC announced</a> that First American agreed to pay $487,616 to settle charges over failures in its cybersecurity disclosure controls. The SEC's order said the company's own security staff had found the problem several months before the journalist did, and it had not been fixed.</p>
+<p>One changed number. No hacking tools. That is why this bug is worth ten minutes of your time.</p>
+<p><strong>Think of it like this:</strong> your app is a coat check. You hand in your coat and get ticket 1042. A careful attendant looks at the ticket and at you. A careless one hands over whatever coat matches the number, so anyone who writes "1041" on a scrap of paper walks off with someone else's coat.</p>
+<h2>Why AI-built apps hit this</h2>
+<p>When you ask an AI tool to "add a page that shows an invoice", the quickest working code takes the ID from the address and fetches that record. It works perfectly when you test it, because you only ever open your own invoices. Nothing on screen tells you the "is this yours?" check is missing.</p>
+<p>Logging in doesn't fix it either. A login proves who someone is. It doesn't stop them asking for a record that belongs to someone else. Each request needs its own ownership check.</p>
+<p>Random-looking IDs help a little, but they are not a fix. OWASP's guide says long random IDs are a useful extra layer, but the access check is still essential even when IDs are hard to guess. IDs can still end up in the wrong hands, for example through a shared link, and the app should block access when that happens.</p>
+<h2>The 10-minute check</h2>
+<h3>1. Make two test accounts</h3>
+<p>Sign up twice in your live app, as user A and user B. Use different browsers, or a normal window and a private window, so you can stay logged in as both.</p>
+<h3>2. Create something as user A</h3>
+<p>As user A, create one of everything your app stores per user: a project, an order, a note, an uploaded file, a profile. Open each one and copy the page address.</p>
+<h3>3. Open those addresses as user B</h3>
+<p>Paste each of user A's addresses into user B's browser. You should get an error, a "not found" page, or be sent away. If user B can see user A's data, you've found the bug.</p>
+<h3>4. Try neighboring numbers</h3>
+<p>If your IDs are plain numbers, change them up or down by one while logged in as user B. Any record that isn't user B's should be blocked.</p>
+<h3>5. Don't forget actions, not just pages</h3>
+<p>The same bug hides in edit, delete, download and export buttons. OWASP's guide recommends testing every operation that uses an ID: read, create, update, delete, export and admin actions. Also check what's sent behind the scenes. In Chrome, right-click, choose <strong>Inspect</strong>, open the <strong>Network</strong> tab, and click around as user A. Requests with IDs in them, like <code>/api/orders/1042</code>, are the ones to test. If you're not comfortable replaying those requests, the prompt below lets your coding agent do the reading.</p>
+<p>Only test your own app, with your own test accounts.</p>
+<h3>6. Ask your coding agent to audit it</h3>
+<p>Paste this into Cursor, Claude Code, Lovable, Bolt or whatever you build with:</p>
+<blockquote>
+<p>List every page, API route and server function in this app that takes an ID (in the URL, query string, request body or form) and uses it to read, update, delete, download or export a record or file. For each one, show me the exact code that checks the record belongs to the logged-in user, or say clearly that there is no such check. Also tell me where the app gets the current user's ID: from the login session on the server, or from something the browser sends. Do not change anything yet.</p>
+</blockquote>
+<p>Read the answer yourself. If it says "all routes are protected", ask it to show the exact line that does the check for each one.</p>
+<h2>How to fix it</h2>
+<p>The core rule is "find this record, but only if it belongs to the person asking." In database terms, the lookup includes the owner. For example:</p>
+<pre><code class="language-sql">-- Risky: returns any invoice to anyone who asks for it
+select * from invoices where id = $1;
+
+-- Safer: returns the invoice only if it belongs to the logged-in user
+select * from invoices where id = $1 and user_id = $2;
+</code></pre>
+<p>Here <code>$2</code> must be the user ID from the server's login session. Then work through these steps:</p>
+<ol>
+<li>
+<p><strong>Check ownership on the server, on every request.</strong> Every page and API route that takes an ID should look up the record the safer way shown above.</p>
+</li>
+<li>
+<p><strong>Never trust a user ID sent by the browser.</strong> OWASP's guide recommends taking the current user from the session, not from the request. A hidden form field like <code>user_id=57</code> can be edited by anyone.</p>
+</li>
+<li>
+<p><strong>Cover every action.</strong> Apply the same check to edit, delete, download and export, not just the view page.</p>
+</li>
+<li>
+<p><strong>If you use Supabase or Firebase directly from the browser,</strong> your database rules do this job. Read our <a href="supabase-rls-check.html">Supabase RLS check</a> or <a href="firebase-security-rules-test-mode.html">Firebase rules check</a> and make sure each rule ties data to its owner.</p>
+</li>
+<li>
+<p><strong>Watch your server code that uses a Supabase secret key.</strong> <a href="https://supabase.com/docs/guides/getting-started/api-keys">Supabase's docs</a> say secret keys, including the older <code>service_role</code> key, bypass every Row Level Security policy. They're meant for servers and APIs that run their own authorization checks. So if a server route uses one, that route must check ownership itself.</p>
+</li>
+<li>
+<p><strong>Use random IDs as an extra layer.</strong> Long random IDs (like UUIDs) make guessing harder. They don't replace the check.</p>
+</li>
+<li>
+<p><strong>Retest with your two accounts.</strong> Repeat steps 3 to 5 of the 10-minute check after every fix. Then ask your coding agent to add an automated test that logs in as user B, requests user A's record, and expects it to be blocked, so the bug can't quietly come back.</p>
+</li>
+</ol>
+<p>If you find the bug in a live app with real users, fix it first. Then check your logs, if you have them, for one account requesting many records it doesn't own.</p>
+<div class="box"><h2>Want someone to check it for you?</h2>
+<p>The free <a href="https://shipreadycheck-dev.github.io/#free">10-Minute Pre-Launch Security Checklist</a> includes this exact check (number 7) plus nine others, with a prompt for each one.</p>
+<p>Or have us look for you. The <a href="https://shipreadycheck-dev.github.io/#pricing">Ship-Ready Check</a> reviews your repo for missing ownership checks, open database rules, exposed keys, unverified payments and more, and sends a plain-English report within 24 hours. From $29.</p></div></main>
+<footer><a href="guides.html">Blog</a> · <a href="./">Ship-Ready Check</a> · <a href="terms.html">Terms</a></footer>
+</div></body></html>
