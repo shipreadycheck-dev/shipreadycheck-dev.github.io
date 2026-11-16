@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Did your AI coding tool install a fake npm package? How to check for slopsquatting</title>
+<meta name="description" content="AI coding tools sometimes invent package names, and attackers register them. How to check the packages in your AI-built app are real, and what to do if one isn&#x27;t.">
+<link rel="canonical" href="https://shipreadycheck-dev.github.io/ai-hallucinated-npm-packages-slopsquatting.html">
+<meta property="og:title" content="Did your AI coding tool install a fake npm package? How to check for slopsquatting"><meta property="og:description" content="AI coding tools sometimes invent package names, and attackers register them. How to check the packages in your AI-built app are real, and what to do if one isn&#x27;t."><meta property="og:type" content="article"><meta property="og:url" content="https://shipreadycheck-dev.github.io/ai-hallucinated-npm-packages-slopsquatting.html">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "Did your AI coding tool install a fake npm package? How to check for slopsquatting", "description": "AI coding tools sometimes invent package names, and attackers register them. How to check the packages in your AI-built app are real, and what to do if one isn't.", "dateModified": "2026-11-16", "author": {"@type": "Organization", "name": "Ship-Ready Check", "url": "https://shipreadycheck-dev.github.io"}, "mainEntityOfPage": "https://shipreadycheck-dev.github.io/ai-hallucinated-npm-packages-slopsquatting.html"}</script>
+<style>:root{--paper:#EEF1F4;--panel:#fff;--ink:#1C2433;--soft:#4A5568;--rule:#C9D1DB;--tag:#F2C230;--focus:#2457C5}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#141A24;--panel:#1C2433;--ink:#E8ECF2;--soft:#A7B1C0;--rule:#2F3A4C;--tag:#E6B422;--focus:#7AA2F7}}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Archivo,system-ui,sans-serif;font-size:18px;line-height:1.65}
+a{color:inherit}:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.wrap{max-width:740px;margin:0 auto;padding:24px 20px 80px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:36px;font-size:16px}
+.brand{font-weight:800;font-stretch:115%;text-decoration:none;display:flex;gap:10px;align-items:center}
+.brand i{width:12px;height:12px;border-radius:50%;background:var(--tag);box-shadow:0 0 0 3px var(--ink);display:inline-block}
+.top a.cta{text-decoration:none;font-weight:700;border:2px solid var(--ink);border-radius:9px;padding:7px 14px}
+h1{font-stretch:118%;font-weight:900;font-size:clamp(30px,5vw,44px);line-height:1.08;margin:0 0 18px}
+h2{font-stretch:110%;font-weight:850;font-size:26px;margin:44px 0 10px}
+h3{font-size:20px;margin:30px 0 6px}
+blockquote{margin:16px 0;padding:16px 20px;background:var(--tag);color:#2A2100;border-radius:12px}
+blockquote p{margin:0}
+table{border-collapse:collapse;width:100%;font-size:16px;margin:12px 0}
+th,td{border:1px solid var(--rule);padding:8px 10px;text-align:left;vertical-align:top}
+code{font-family:"JetBrains Mono",monospace;font-size:.84em;background:var(--panel);padding:1px 5px;border-radius:4px}
+pre{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:16px;overflow-x:auto}
+pre code{background:none;padding:0}
+.meta{color:var(--soft);font-size:15px;margin:-6px 0 28px}
+.box{margin-top:48px;padding:26px;border:2px solid var(--ink);border-radius:14px;background:var(--panel)}
+.box h2{margin-top:0}
+.list a{display:block;padding:18px 0;border-bottom:1px solid var(--rule);text-decoration:none}
+.list a em{display:block;font-style:normal;font-size:14px;color:var(--soft);margin-bottom:2px}.list a strong{display:block;font-size:20px}.list a span{color:var(--soft);font-size:16px}
+footer{margin-top:56px;color:var(--soft);font-size:15px}</style></head><body><div class="wrap">
+<header class="top"><a class="brand" href="./"><i aria-hidden="true"></i>Ship-Ready Check</a><a class="cta" href="./#pricing">Check my app</a></header>
+<main>
+<h1>Did your AI coding tool install a fake npm package? How to check for slopsquatting</h1>
+<p class="meta">Guide · Ship-Ready Check · November 16, 2026</p>
+<p>When Cursor, Claude Code, Bolt, Lovable or Replit adds a feature, it often installs extra code from the internet called <strong>packages</strong> (or dependencies). Most of them are real, popular and fine. But AI tools sometimes suggest a package name that sounds right and doesn't exist. If someone registers that name first, your app installs their code instead. This guide shows you how to check every package in your app is the one you meant to get, in about fifteen minutes.</p>
+<h2>Why this matters</h2>
+<p>This problem has a name: <strong>slopsquatting</strong>. It works like typosquatting, except the "typo" comes from the AI, not from you.</p>
+<p>It isn't rare. A study presented at USENIX Security 2025 tested 16 code-writing AI models on Python and JavaScript tasks. Socket's <a href="https://socket.dev/blog/slopsquatting-how-ai-hallucinations-are-fueling-a-new-class-of-supply-chain-attacks">write-up of the research</a> reports that 19.7% of the packages the models recommended did not exist, with over 205,000 unique made-up names. Commercial models did better than open-source ones (5.2% versus 21.7% on average), but none scored zero.</p>
+<p>The made-up names are also predictable. When researchers reran the same prompts ten times, 43% of the fake names came back every single time. That's what makes this attack practical: an attacker can ask the AI the same questions, collect the names it invents, and register them.</p>
+<p>Real cases already exist:</p>
+<ul>
+<li>In early 2024, researcher Bar Lanyado noticed AI models kept suggesting a Python package called <code>huggingface-cli</code>, which wasn't the real install name. He uploaded an empty placeholder under that name, and it got over 30,000 downloads in three months, according to <a href="https://aikido.dev/blog/slopsquatting-ai-package-hallucination-attacks">Aikido's summary</a>.</li>
+<li>In January 2026, Aikido researcher Charlie Eriksen found an invented npm name, <code>react-codeshift</code>, inside AI-generated "agent skill" files that had been copied into more than 200 repositories. He <a href="https://aikido.dev/blog/agent-skills-spreading-hallucinated-npx-commands">registered the name himself</a> so an attacker couldn't, and it still got a few downloads a day, apparently from coding agents following those instructions.</li>
+</ul>
+<p>A malicious package doesn't need you to run it on purpose. Aikido notes that some run a script the moment they're installed, and try to steal API keys, cloud tokens and other credentials from the machine.</p>
+<p><strong>Think of it like this:</strong> you ask a new assistant to order printer ink, and they confidently write down a supplier that doesn't exist. Normally the order just fails. But if a scammer has set up a shop with that exact name, the order goes through, and the box that arrives isn't ink.</p>
+<h2>Why AI-built apps hit this</h2>
+<p>Two things make it more likely in vibe-coded apps. First, the AI often installs packages for you, so no human reads the name before it runs. Second, people tend to trust a name that looks official, like <code>something-cli</code> or <code>react-something</code>. The Cloud Security Alliance's <a href="https://labs.cloudsecurityalliance.org/research/csa-research-note-slopsquatting-ai-supply-chain-20260419/">research note on slopsquatting</a> points out that agents can resolve and install packages on their own, so nobody may notice a suspicious name at all.</p>
+<h2>The 15-minute check</h2>
+<h3>1. Find your package list</h3>
+<p>In your project, open the file called <code>package.json</code>. Look for the sections named <code>dependencies</code> and <code>devDependencies</code>. Each line is a package name and a version. If you see a file called <code>package-lock.json</code> next to it, that's your lockfile, which records the exact versions that were installed.</p>
+<p>If your project uses Python, the equivalent is usually <code>requirements.txt</code> or <code>pyproject.toml</code>. The same idea applies.</p>
+<h3>2. Mark the names you don't recognize</h3>
+<p>You don't need to know every package. Big, well-known ones like <code>react</code>, <code>next</code>, <code>express</code>, <code>stripe</code> or <code>@supabase/supabase-js</code> are not what this check is looking for. Circle anything that:</p>
+<ul>
+<li>you've never heard of,</li>
+<li>looks like two real names mashed together,</li>
+<li>has a name very close to a popular package, or</li>
+<li>was added recently, in a change you didn't ask for.</li>
+</ul>
+<h3>3. Check each suspicious package is real and established</h3>
+<p>For each name you circled, you want three answers: does it exist, how long has it existed, and who publishes it. npm's own command <code>npm view</code> shows a package's details, including when each version was published, according to the <a href="https://docs.npmjs.com/cli/v12/commands/npm-view">npm view docs</a>. npm's <a href="https://docs.npmjs.com/reporting-malware-in-an-npm-package">malware reporting page</a> also shows <code>npm owner ls &lt;package-name&gt;</code>, which lists who maintains it.</p>
+<p>Warning signs:</p>
+<ul>
+<li>npm can't find the package at all. Your code is asking for something that doesn't exist, and anyone could register it tomorrow.</li>
+<li>It was first published very recently, especially in the last few months.</li>
+<li>The maintainer or linked source code doesn't match the project it claims to be. A package that says it's from a big company but is published by an unknown account is a red flag.</li>
+</ul>
+<p>Aikido's advice is to verify the publisher, not just the name or download count.</p>
+<h3>4. Ask your coding agent to audit it</h3>
+<p>Paste this into Cursor, Claude Code, Bolt or whatever you build with:</p>
+<blockquote>
+<p>List every package in package.json (dependencies and devDependencies) and any packages the code runs with npx, pnpm dlx, yarn dlx or bunx, including in docs, scripts and agent skill or rules files. For each one, run <code>npm view &lt;name&gt;</code> and <code>npm owner ls &lt;name&gt;</code> and tell me: does it exist on npm, when was it first published, who maintains it, and what is its repository URL. Flag any package that does not exist, was first published in the last 90 days, has a name close to a better-known package, or whose maintainer does not match the project it claims to be. Do not install, remove or change anything yet.</p>
+</blockquote>
+<p>Read the answer yourself. If the agent says everything is fine, ask it to show you the raw output for the packages you circled.</p>
+<h2>How to fix it</h2>
+<ol>
+<li><strong>Replace anything that doesn't exist or looks wrong.</strong> Ask your agent what the package was supposed to do, then find the real, established package for that job and check it the same way before switching. For example, Aikido's fix for the <code>react-codeshift</code> case was to use the real <code>jscodeshift</code> or <code>react-codemod</code> instead.</li>
+<li><strong>Commit your lockfile.</strong> npm's <a href="https://docs.npmjs.com/cli/v12/configuring-npm/package-lock-json">package-lock.json docs</a> say it is intended to be committed, so every install and deploy uses the same dependency tree and any change shows up in your history.</li>
+<li><strong>Don't let your agent install packages without asking.</strong> Add a line to your agent's rules file such as: "Never install a new package without telling me its exact name and why, and checking it exists on npm with an established publisher." Then review each new package before you approve it.</li>
+<li><strong>Check copied commands too.</strong> Install commands in READMEs, tutorials and agent skill files can carry invented names. Check them before you run them.</li>
+<li><strong>If you installed something malicious, treat your machine and keys as exposed.</strong> Remove the package, then rotate (replace) the API keys, tokens and passwords that were on that computer or in that project. If you're sure a package is malware, npm has a <a href="https://docs.npmjs.com/reporting-malware-in-an-npm-package">Report malware</a> option on the package page.</li>
+</ol>
+<p>None of this makes you immune. It just means a made-up name has to get past you, not only past the AI.</p>
+<div class="box"><h2>Want someone to check it for you?</h2>
+<p>The free <a href="https://shipreadycheck-dev.github.io/#free">10-Minute Pre-Launch Security Checklist</a> walks through the most common launch mistakes, with a copy-paste prompt for each one.</p>
+<p>Or have us look for you. The <a href="https://shipreadycheck-dev.github.io/#pricing">Ship-Ready Check</a> reviews your repo for suspicious dependencies, exposed keys, open database rules, unverified payments and more, and sends a plain-English report within 24 hours. From $29.</p></div></main>
+<footer><a href="guides.html">Blog</a> · <a href="./">Ship-Ready Check</a> · <a href="terms.html">Terms</a></footer>
+</div></body></html>
